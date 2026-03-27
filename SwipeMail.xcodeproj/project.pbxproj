@@ -1,0 +1,296 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A10000000000000000000001 /* SwipeMailApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000011 /* SwipeMailApp.swift */; };
+		A10000000000000000000002 /* FeatureScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000012 /* FeatureScaffold.swift */; };
+		A10000000000000000000003 /* ServiceScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000013 /* ServiceScaffold.swift */; };
+		A10000000000000000000004 /* ModelScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000014 /* ModelScaffold.swift */; };
+		A10000000000000000000005 /* InfrastructureScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000015 /* InfrastructureScaffold.swift */; };
+		A10000000000000000000006 /* DesignSystemScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000016 /* DesignSystemScaffold.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		A10000000000000000000010 /* SwipeMail.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwipeMail.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A10000000000000000000011 /* SwipeMailApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeMailApp.swift; sourceTree = "<group>"; };
+		A10000000000000000000012 /* FeatureScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureScaffold.swift; sourceTree = "<group>"; };
+		A10000000000000000000013 /* ServiceScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceScaffold.swift; sourceTree = "<group>"; };
+		A10000000000000000000014 /* ModelScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelScaffold.swift; sourceTree = "<group>"; };
+		A10000000000000000000015 /* InfrastructureScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfrastructureScaffold.swift; sourceTree = "<group>"; };
+		A10000000000000000000016 /* DesignSystemScaffold.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystemScaffold.swift; sourceTree = "<group>"; };
+		A10000000000000000000017 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		A10000000000000000000020 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		A10000000000000000000030 = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000031 /* App */,
+				A10000000000000000000032 /* Features */,
+				A10000000000000000000033 /* Services */,
+				A10000000000000000000034 /* Models */,
+				A10000000000000000000035 /* Infrastructure */,
+				A10000000000000000000036 /* DesignSystem */,
+				A10000000000000000000037 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		A10000000000000000000031 /* App */ = {
+			isa = PBXGroup;
+			path = App;
+			sourceTree = "<group>";
+			children = (
+				A10000000000000000000011 /* SwipeMailApp.swift */,
+				A10000000000000000000017 /* Info.plist */,
+			);
+		};
+		A10000000000000000000032 /* Features */ = {
+			isa = PBXGroup;
+			path = Features;
+			sourceTree = "<group>";
+			children = (
+				A10000000000000000000012 /* FeatureScaffold.swift */,
+			);
+		};
+		A10000000000000000000033 /* Services */ = {
+			isa = PBXGroup;
+			path = Services;
+			sourceTree = "<group>";
+			children = (
+				A10000000000000000000013 /* ServiceScaffold.swift */,
+			);
+		};
+		A10000000000000000000034 /* Models */ = {
+			isa = PBXGroup;
+			path = Models;
+			sourceTree = "<group>";
+			children = (
+				A10000000000000000000014 /* ModelScaffold.swift */,
+			);
+		};
+		A10000000000000000000035 /* Infrastructure */ = {
+			isa = PBXGroup;
+			path = Infrastructure;
+			sourceTree = "<group>";
+			children = (
+				A10000000000000000000015 /* InfrastructureScaffold.swift */,
+			);
+		};
+		A10000000000000000000036 /* DesignSystem */ = {
+			isa = PBXGroup;
+			path = DesignSystem;
+			sourceTree = "<group>";
+			children = (
+				A10000000000000000000016 /* DesignSystemScaffold.swift */,
+			);
+		};
+		A10000000000000000000037 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				A10000000000000000000010 /* SwipeMail.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		A10000000000000000000040 /* SwipeMail */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A10000000000000000000050 /* Build configuration list for PBXNativeTarget "SwipeMail" */;
+			buildPhases = (
+				A10000000000000000000021 /* Sources */,
+				A10000000000000000000020 /* Frameworks */,
+				A10000000000000000000022 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SwipeMail;
+			productName = SwipeMail;
+			productReference = A10000000000000000000010 /* SwipeMail.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A10000000000000000000041 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					A10000000000000000000040 = {
+						CreatedOnToolsVersion = 16.0;
+					};
+				};
+			};
+			buildConfigurationList = A10000000000000000000051 /* Build configuration list for PBXProject "SwipeMail" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = A10000000000000000000030;
+			productRefGroup = A10000000000000000000037 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				A10000000000000000000040 /* SwipeMail */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A10000000000000000000022 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		A10000000000000000000021 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A10000000000000000000001 /* SwipeMailApp.swift in Sources */,
+				A10000000000000000000002 /* FeatureScaffold.swift in Sources */,
+				A10000000000000000000003 /* ServiceScaffold.swift in Sources */,
+				A10000000000000000000004 /* ModelScaffold.swift in Sources */,
+				A10000000000000000000005 /* InfrastructureScaffold.swift in Sources */,
+				A10000000000000000000006 /* DesignSystemScaffold.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		A10000000000000000000060 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.swipemail.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		A10000000000000000000061 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = App/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.swipemail.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		A10000000000000000000062 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+			};
+			name = Debug;
+		};
+		A10000000000000000000063 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		A10000000000000000000050 /* Build configuration list for PBXNativeTarget "SwipeMail" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10000000000000000000060 /* Debug */,
+				A10000000000000000000061 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A10000000000000000000051 /* Build configuration list for PBXProject "SwipeMail" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A10000000000000000000062 /* Debug */,
+				A10000000000000000000063 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A10000000000000000000041 /* Project object */;
+}
