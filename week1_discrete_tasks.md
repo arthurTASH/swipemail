@@ -4,7 +4,7 @@ Derived from the Week 1 milestone in `implementation_plan.md`.
 
 ## 1. Repository and Xcode project scaffolding
 - [x] Create the iOS app project file structure in-repo (`SwipeMail.xcodeproj`, shared scheme, `Info.plist`).
-- [ ] Verify Build/Run on macOS Xcode simulator.
+- [x] Verify Build/Run on macOS Xcode simulator.
 - [x] Add top-level groups/folders: `App`, `Features`, `Services`, `Models`, `Infrastructure`, `DesignSystem`.
 - [x] Add starter Swift files/placeholders in each folder to establish module boundaries.
 
@@ -26,12 +26,12 @@ Derived from the Week 1 milestone in `implementation_plan.md`.
 6. Mark Task 1 complete by changing the unchecked simulator verification item above to `[x]`.
 
 ## 2. Build configurations and environment setup
-- Add environment config structure for:
+- [x] Add environment config structure for:
   - OAuth client ID(s)
   - Redirect URI
   - Gmail API constants/scopes placeholders
-- Create Debug/Release config values (e.g., `.xcconfig` or equivalent).
-- Ensure no secrets are hardcoded in source files.
+- [x] Create Debug/Release config values (e.g., `.xcconfig` or equivalent).
+- [x] Ensure no secrets are hardcoded in source files.
 
 ## 3. App lifecycle and initial routing shell
 - Implement app bootstrap flow:

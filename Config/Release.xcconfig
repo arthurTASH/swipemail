@@ -1,0 +1,12 @@
+// Release configuration values for production builds.
+// Replace placeholders with production environment values before distribution.
+
+PRODUCT_BUNDLE_IDENTIFIER = com.swipemail.app
+
+SWIPEMAIL_OAUTH_CLIENT_ID = REPLACE_WITH_RELEASE_OAUTH_CLIENT_ID
+SWIPEMAIL_OAUTH_REDIRECT_URI = REPLACE_WITH_RELEASE_REDIRECT_URI
+
+SWIPEMAIL_GMAIL_API_BASE_URL = https:/$()/gmail.googleapis.com
+SWIPEMAIL_GMAIL_SCOPE_READONLY = https:/$()/www.googleapis.com/auth/gmail.readonly
+SWIPEMAIL_GMAIL_SCOPE_MODIFY = https:/$()/www.googleapis.com/auth/gmail.modify
+SWIPEMAIL_GMAIL_SCOPE_LABELS = https:/$()/www.googleapis.com/auth/gmail.labels

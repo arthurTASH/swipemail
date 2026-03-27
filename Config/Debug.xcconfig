@@ -1,0 +1,12 @@
+// Debug configuration values for local development.
+// Replace placeholders with non-secret environment-specific values as needed.
+
+PRODUCT_BUNDLE_IDENTIFIER = com.swipemail.app.debug
+
+SWIPEMAIL_OAUTH_CLIENT_ID = REPLACE_WITH_DEBUG_OAUTH_CLIENT_ID
+SWIPEMAIL_OAUTH_REDIRECT_URI = REPLACE_WITH_DEBUG_REDIRECT_URI
+
+SWIPEMAIL_GMAIL_API_BASE_URL = https:/$()/gmail.googleapis.com
+SWIPEMAIL_GMAIL_SCOPE_READONLY = https:/$()/www.googleapis.com/auth/gmail.readonly
+SWIPEMAIL_GMAIL_SCOPE_MODIFY = https:/$()/www.googleapis.com/auth/gmail.modify
+SWIPEMAIL_GMAIL_SCOPE_LABELS = https:/$()/www.googleapis.com/auth/gmail.labels

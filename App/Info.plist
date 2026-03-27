@@ -20,6 +20,18 @@
 	<string>1</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>SwipeMailGmailAPIBaseURL</key>
+	<string>$(SWIPEMAIL_GMAIL_API_BASE_URL)</string>
+	<key>SwipeMailGmailLabelsScope</key>
+	<string>$(SWIPEMAIL_GMAIL_SCOPE_LABELS)</string>
+	<key>SwipeMailGmailModifyScope</key>
+	<string>$(SWIPEMAIL_GMAIL_SCOPE_MODIFY)</string>
+	<key>SwipeMailGmailReadonlyScope</key>
+	<string>$(SWIPEMAIL_GMAIL_SCOPE_READONLY)</string>
+	<key>SwipeMailOAuthClientID</key>
+	<string>$(SWIPEMAIL_OAUTH_CLIENT_ID)</string>
+	<key>SwipeMailOAuthRedirectURI</key>
+	<string>$(SWIPEMAIL_OAUTH_REDIRECT_URI)</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
