@@ -17,13 +17,16 @@ Derived from the Week 1 milestone in `implementation_plan.md`.
    - Shared scheme `SwipeMail` is available
 3. In Target Build Settings, confirm:
    - iOS Deployment Target is set for the team’s baseline (e.g., iOS 17+)
-   - Signing Team and Bundle Identifier are configured
-4. Build verification:
+   - Bundle Identifier is set (currently `com.swipemail.app` in project settings)
+4. In **Target → Signing & Capabilities**:
+   - For simulator-only local runs, a Signing Team is **not required**
+   - Configure Signing Team only when running on a physical device or preparing archive/distribution
+5. Build verification:
    - Run `Product → Build` (⌘B) and resolve any target membership issues
-5. Simulator verification:
+6. Simulator verification:
    - Select `iPhone 16` (or team standard simulator)
    - Run `Product → Run` (⌘R) and confirm app launches to scaffold screen
-6. Mark Task 1 complete by changing the unchecked simulator verification item above to `[x]`.
+7. Mark Task 1 complete by changing the unchecked simulator verification item above to `[x]`.
 
 ## 2. Build configurations and environment setup
 - Add environment config structure for:
