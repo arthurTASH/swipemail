@@ -34,20 +34,20 @@ Derived from the Week 1 milestone in `implementation_plan.md`.
 - [x] Ensure no secrets are hardcoded in source files.
 
 ## 3. App lifecycle and initial routing shell
-- Implement app bootstrap flow:
+- [x] Implement app bootstrap flow:
   - Launch app
   - Check for stored auth token in Keychain abstraction
   - Route to Onboarding when token missing
   - Route to Inbox shell when token present
-- Add placeholder Onboarding and Inbox screens to validate routing.
+- [x] Add placeholder Onboarding and Inbox screens to validate routing.
 
 ## 4. Core service contracts (interfaces only)
-- Define protocol/contract stubs for:
+- [x] Define protocol/contract stubs for:
   - `AuthService`
   - `GmailService`
   - `QueueService`
   - `SyncEngine`
-- Add dependency injection entry point in app composition root.
+- [x] Add dependency injection entry point in app composition root.
 
 ## 5. Error and state handling foundations
 - Define shared app error model (network, auth, unknown).

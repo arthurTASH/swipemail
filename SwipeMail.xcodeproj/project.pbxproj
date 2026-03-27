@@ -14,6 +14,18 @@
 		A10000000000000000000005 /* InfrastructureScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000015 /* InfrastructureScaffold.swift */; };
 		A10000000000000000000006 /* DesignSystemScaffold.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000016 /* DesignSystemScaffold.swift */; };
 		A10000000000000000000007 /* AppEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000018 /* AppEnvironment.swift */; };
+		A10000000000000000000008 /* AppSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001B /* AppSessionController.swift */; };
+		A10000000000000000000009 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001C /* OnboardingView.swift */; };
+		A1000000000000000000000A /* InboxPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001D /* InboxPlaceholderView.swift */; };
+		A1000000000000000000000B /* AuthSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001E /* AuthSession.swift */; };
+		A1000000000000000000000C /* SessionTokenStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000001F /* SessionTokenStore.swift */; };
+		A1000000000000000000000D /* AppDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000027 /* AppDependencies.swift */; };
+		A1000000000000000000000E /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000028 /* AuthService.swift */; };
+		A1000000000000000000000F /* GmailService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000029 /* GmailService.swift */; };
+		A10000000000000000000070 /* QueueService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002A /* QueueService.swift */; };
+		A10000000000000000000071 /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002B /* SyncEngine.swift */; };
+		A10000000000000000000072 /* GmailMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002C /* GmailMessage.swift */; };
+		A10000000000000000000073 /* SwipeAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002D /* SwipeAction.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +40,18 @@
 		A10000000000000000000018 /* AppEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppEnvironment.swift; sourceTree = "<group>"; };
 		A10000000000000000000019 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		A1000000000000000000001A /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		A1000000000000000000001B /* AppSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSessionController.swift; sourceTree = "<group>"; };
+		A1000000000000000000001C /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		A1000000000000000000001D /* InboxPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxPlaceholderView.swift; sourceTree = "<group>"; };
+		A1000000000000000000001E /* AuthSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthSession.swift; sourceTree = "<group>"; };
+		A1000000000000000000001F /* SessionTokenStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionTokenStore.swift; sourceTree = "<group>"; };
+		A10000000000000000000027 /* AppDependencies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDependencies.swift; sourceTree = "<group>"; };
+		A10000000000000000000028 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		A10000000000000000000029 /* GmailService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailService.swift; sourceTree = "<group>"; };
+		A1000000000000000000002A /* QueueService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueService.swift; sourceTree = "<group>"; };
+		A1000000000000000000002B /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
+		A1000000000000000000002C /* GmailMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailMessage.swift; sourceTree = "<group>"; };
+		A1000000000000000000002D /* SwipeAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeAction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +85,8 @@
 			sourceTree = "<group>";
 			children = (
 				A10000000000000000000011 /* SwipeMailApp.swift */,
+				A10000000000000000000027 /* AppDependencies.swift */,
+				A1000000000000000000001B /* AppSessionController.swift */,
 				A10000000000000000000017 /* Info.plist */,
 			);
 		};
@@ -70,6 +96,8 @@
 			sourceTree = "<group>";
 			children = (
 				A10000000000000000000012 /* FeatureScaffold.swift */,
+				A1000000000000000000001C /* OnboardingView.swift */,
+				A1000000000000000000001D /* InboxPlaceholderView.swift */,
 			);
 		};
 		A10000000000000000000033 /* Services */ = {
@@ -78,6 +106,10 @@
 			sourceTree = "<group>";
 			children = (
 				A10000000000000000000013 /* ServiceScaffold.swift */,
+				A10000000000000000000028 /* AuthService.swift */,
+				A10000000000000000000029 /* GmailService.swift */,
+				A1000000000000000000002A /* QueueService.swift */,
+				A1000000000000000000002B /* SyncEngine.swift */,
 			);
 		};
 		A10000000000000000000034 /* Models */ = {
@@ -86,6 +118,9 @@
 			sourceTree = "<group>";
 			children = (
 				A10000000000000000000014 /* ModelScaffold.swift */,
+				A1000000000000000000001E /* AuthSession.swift */,
+				A1000000000000000000002C /* GmailMessage.swift */,
+				A1000000000000000000002D /* SwipeAction.swift */,
 			);
 		};
 		A10000000000000000000035 /* Infrastructure */ = {
@@ -95,6 +130,7 @@
 			children = (
 				A10000000000000000000018 /* AppEnvironment.swift */,
 				A10000000000000000000015 /* InfrastructureScaffold.swift */,
+				A1000000000000000000001F /* SessionTokenStore.swift */,
 			);
 		};
 		A10000000000000000000036 /* DesignSystem */ = {
@@ -197,6 +233,18 @@
 				A10000000000000000000005 /* InfrastructureScaffold.swift in Sources */,
 				A10000000000000000000006 /* DesignSystemScaffold.swift in Sources */,
 				A10000000000000000000007 /* AppEnvironment.swift in Sources */,
+				A10000000000000000000008 /* AppSessionController.swift in Sources */,
+				A10000000000000000000009 /* OnboardingView.swift in Sources */,
+				A1000000000000000000000A /* InboxPlaceholderView.swift in Sources */,
+				A1000000000000000000000B /* AuthSession.swift in Sources */,
+				A1000000000000000000000C /* SessionTokenStore.swift in Sources */,
+				A1000000000000000000000D /* AppDependencies.swift in Sources */,
+				A1000000000000000000000E /* AuthService.swift in Sources */,
+				A1000000000000000000000F /* GmailService.swift in Sources */,
+				A10000000000000000000070 /* QueueService.swift in Sources */,
+				A10000000000000000000071 /* SyncEngine.swift in Sources */,
+				A10000000000000000000072 /* GmailMessage.swift in Sources */,
+				A10000000000000000000073 /* SwipeAction.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
