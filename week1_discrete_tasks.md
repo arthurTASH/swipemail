@@ -9,14 +9,12 @@ Derived from the Week 1 milestone in `implementation_plan.md`.
 - [x] Add starter Swift files/placeholders in each folder to establish module boundaries.
 
 ### Unresolved item completion steps (Xcode/simulator)
-1. On macOS with Xcode 16+, create project:
-   - **File → New → Project → iOS App**
-   - Product Name: `SwipeMail`
-   - Interface: **SwiftUI**
-   - Language: **Swift**
-   - Testing: **Unit Tests** enabled
-2. Move these existing folders into the new project navigator:
-   - `App`, `Features`, `Services`, `Models`, `Infrastructure`, `DesignSystem`
+1. On macOS with Xcode 16+, clone this repository and open:
+   - `SwipeMail.xcodeproj` (or the repo folder directly in Xcode)
+2. Confirm project wiring in Xcode:
+   - Target: `SwipeMail`
+   - Source groups include `App`, `Features`, `Services`, `Models`, `Infrastructure`, `DesignSystem`
+   - Shared scheme `SwipeMail` is available
 3. In Target Build Settings, confirm:
    - iOS Deployment Target is set for the team’s baseline (e.g., iOS 17+)
    - Signing Team and Bundle Identifier are configured
