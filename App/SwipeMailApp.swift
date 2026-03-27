@@ -2,15 +2,16 @@ import SwiftUI
 
 @main
 struct SwipeMailApp: App {
-    private let dependencies = AppDependencies.live()
-
     @StateObject private var sessionController: AppSessionController
 
     init() {
         let dependencies = AppDependencies.live()
-        self.dependencies = dependencies
         _sessionController = StateObject(
-            wrappedValue: AppSessionController(authService: dependencies.authService)
+            wrappedValue: AppSessionController(
+                authService: dependencies.authService,
+                analyticsService: dependencies.analyticsService,
+                logger: dependencies.logger
+            )
         )
     }
 
@@ -23,7 +24,16 @@ struct SwipeMailApp: App {
                 case .onboarding:
                     OnboardingView(connectAction: sessionController.completePlaceholderSignIn)
                 case .inbox:
-                    InboxPlaceholderView(signOutAction: sessionController.signOut)
+                    InboxPlaceholderView(
+                        state: sessionController.inboxViewState,
+                        signOutAction: sessionController.signOut
+                    )
+                }
+            }
+            .overlay(alignment: .top) {
+                if let bannerState = sessionController.bannerState {
+                    StatusBanner(state: bannerState, dismissAction: sessionController.dismissBanner)
+                        .padding(.top, 12)
                 }
             }
             .task {

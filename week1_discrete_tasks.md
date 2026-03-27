@@ -50,14 +50,14 @@ Derived from the Week 1 milestone in `implementation_plan.md`.
 - [x] Add dependency injection entry point in app composition root.
 
 ## 5. Error and state handling foundations
-- Define shared app error model (network, auth, unknown).
-- Add basic user-facing toast/banner component API for transient errors.
-- Add minimal loading/empty/error state models for Inbox shell.
+- [x] Define shared app error model (network, auth, unknown).
+- [x] Add basic user-facing toast/banner component API for transient errors.
+- [x] Add minimal loading/empty/error state models for Inbox shell.
 
 ## 6. Logging/telemetry baseline
-- Add structured logging utility with levels (debug/info/error).
-- Add analytics event protocol + no-op implementation for local builds.
-- Ensure sensitive data (tokens/message bodies) are redacted by default.
+- [x] Add structured logging utility with levels (debug/info/error).
+- [x] Add analytics event protocol + no-op implementation for local builds.
+- [x] Ensure sensitive data (tokens/message bodies) are redacted by default.
 
 ## 7. Definition of done checks for Week 1
 - App launches successfully from clean install.

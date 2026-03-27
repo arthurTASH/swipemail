@@ -26,6 +26,11 @@
 		A10000000000000000000071 /* SyncEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002B /* SyncEngine.swift */; };
 		A10000000000000000000072 /* GmailMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002C /* GmailMessage.swift */; };
 		A10000000000000000000073 /* SwipeAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002D /* SwipeAction.swift */; };
+		A10000000000000000000074 /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002E /* AppError.swift */; };
+		A10000000000000000000075 /* InboxViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000002F /* InboxViewState.swift */; };
+		A10000000000000000000076 /* StatusBanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000039 /* StatusBanner.swift */; };
+		A10000000000000000000077 /* AppLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000003A /* AppLogger.swift */; };
+		A10000000000000000000078 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000003B /* AnalyticsService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -52,6 +57,11 @@
 		A1000000000000000000002B /* SyncEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SyncEngine.swift; sourceTree = "<group>"; };
 		A1000000000000000000002C /* GmailMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmailMessage.swift; sourceTree = "<group>"; };
 		A1000000000000000000002D /* SwipeAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeAction.swift; sourceTree = "<group>"; };
+		A1000000000000000000002E /* AppError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
+		A1000000000000000000002F /* InboxViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InboxViewState.swift; sourceTree = "<group>"; };
+		A10000000000000000000039 /* StatusBanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBanner.swift; sourceTree = "<group>"; };
+		A1000000000000000000003A /* AppLogger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLogger.swift; sourceTree = "<group>"; };
+		A1000000000000000000003B /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -121,6 +131,8 @@
 				A1000000000000000000001E /* AuthSession.swift */,
 				A1000000000000000000002C /* GmailMessage.swift */,
 				A1000000000000000000002D /* SwipeAction.swift */,
+				A1000000000000000000002E /* AppError.swift */,
+				A1000000000000000000002F /* InboxViewState.swift */,
 			);
 		};
 		A10000000000000000000035 /* Infrastructure */ = {
@@ -131,6 +143,8 @@
 				A10000000000000000000018 /* AppEnvironment.swift */,
 				A10000000000000000000015 /* InfrastructureScaffold.swift */,
 				A1000000000000000000001F /* SessionTokenStore.swift */,
+				A1000000000000000000003A /* AppLogger.swift */,
+				A1000000000000000000003B /* AnalyticsService.swift */,
 			);
 		};
 		A10000000000000000000036 /* DesignSystem */ = {
@@ -139,6 +153,7 @@
 			sourceTree = "<group>";
 			children = (
 				A10000000000000000000016 /* DesignSystemScaffold.swift */,
+				A10000000000000000000039 /* StatusBanner.swift */,
 			);
 		};
 		A10000000000000000000037 /* Products */ = {
@@ -245,6 +260,11 @@
 				A10000000000000000000071 /* SyncEngine.swift in Sources */,
 				A10000000000000000000072 /* GmailMessage.swift in Sources */,
 				A10000000000000000000073 /* SwipeAction.swift in Sources */,
+				A10000000000000000000074 /* AppError.swift in Sources */,
+				A10000000000000000000075 /* InboxViewState.swift in Sources */,
+				A10000000000000000000076 /* StatusBanner.swift in Sources */,
+				A10000000000000000000077 /* AppLogger.swift in Sources */,
+				A10000000000000000000078 /* AnalyticsService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

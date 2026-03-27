@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct InboxPlaceholderView: View {
+    let state: InboxViewState
     let signOutAction: () -> Void
 
     var body: some View {
@@ -14,10 +15,7 @@ struct InboxPlaceholderView: View {
             Text("Inbox Shell")
                 .font(.title.bold())
 
-            Text("A stored session token was found, so the app routed directly into the inbox placeholder.")
-                .multilineTextAlignment(.center)
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 24)
+            content
 
             Button("Clear Placeholder Session", action: signOutAction)
                 .buttonStyle(.bordered)
@@ -25,5 +23,28 @@ struct InboxPlaceholderView: View {
             Spacer()
         }
         .padding()
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch state {
+        case .loading:
+            ProgressView("Loading inbox state")
+        case let .empty(message):
+            Text(message)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 24)
+        case .ready:
+            Text("Inbox content is ready.")
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .padding(.horizontal, 24)
+        case let .error(error):
+            Text(error.message)
+                .multilineTextAlignment(.center)
+                .foregroundStyle(.red)
+                .padding(.horizontal, 24)
+        }
     }
 }
