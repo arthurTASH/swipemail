@@ -45,34 +45,34 @@ Derived from the Authentication & Session Management workstream and Milestone 1 
 - [ ] Preserve the existing app routing contract so launch behavior continues to depend on stored session presence.
 
 ## 5. Secure token persistence and retrieval
-- [ ] Store the OAuth session securely in Keychain using the Week 1 token-store abstraction or a refined replacement.
-- [ ] Confirm saved session data can be loaded across app relaunches.
-- [ ] Ensure token persistence logging remains redacted by default.
-- [ ] Review Keychain query options and accessibility class for the expected launch-time behavior.
+- [x] Store the OAuth session securely in Keychain using the Week 1 token-store abstraction or a refined replacement.
+- [x] Confirm saved session data can be loaded across app relaunches.
+- [x] Ensure token persistence logging remains redacted by default.
+- [x] Review Keychain query options and accessibility class for the expected launch-time behavior.
 
 ## 6. Silent refresh path
-- [ ] Detect expired or near-expiry access tokens at app bootstrap.
-- [ ] Implement silent token refresh before routing into the inbox experience.
-- [ ] Update persisted session state after a successful refresh.
-- [ ] Fall back to onboarding if refresh fails or the session is no longer valid.
+- [x] Detect expired or near-expiry access tokens at app bootstrap.
+- [x] Implement silent token refresh before routing into the inbox experience.
+- [x] Update persisted session state after a successful refresh.
+- [x] Fall back to onboarding if refresh fails or the session is no longer valid.
 
 ## 7. Sign-out and disconnect behavior
-- [ ] Implement auth-session clearing through the real auth stack, not just the placeholder path.
-- [ ] Revoke tokens if supported by the chosen provider flow.
-- [ ] Route back to onboarding after disconnect.
+- [x] Implement auth-session clearing through the real auth stack, not just the placeholder path.
+- [x] Revoke tokens if supported by the chosen provider flow.
+- [x] Route back to onboarding after disconnect.
 - [ ] Confirm local session and Keychain state are removed after sign-out.
 
 ## 8. Error handling and observability for auth flows
-- [ ] Add typed auth failure mapping for cancellation, configuration failure, refresh failure, and unknown auth errors.
-- [ ] Surface user-facing auth failures through the existing banner/toast foundation.
-- [ ] Add analytics/logging events for auth start, success, refresh success/failure, and sign-out.
-- [ ] Confirm tokens, auth codes, and raw email identifiers never appear in logs.
+- [x] Add typed auth failure mapping for cancellation, configuration failure, refresh failure, and unknown auth errors.
+- [x] Surface user-facing auth failures through the existing banner/toast foundation.
+- [x] Add analytics/logging events for auth start, success, refresh success/failure, and sign-out.
+- [x] Confirm tokens, auth codes, and raw email identifiers never appear in logs.
 
 ## 9. Week 2 verification checklist
-- [ ] First launch reaches onboarding and can begin a real OAuth flow.
-- [ ] Successful auth persists a session and routes into the inbox shell.
-- [ ] Relaunch with a valid stored session skips onboarding.
-- [ ] Expired session attempts silent refresh before showing onboarding.
-- [ ] Failed refresh or invalid session returns the user to onboarding cleanly.
-- [ ] Sign-out/disconnect clears stored auth state and returns to onboarding.
-- [ ] Project builds cleanly on Debug configuration after auth integration.
+- [x] First launch reaches onboarding and can begin a real OAuth flow.
+- [x] Successful auth persists a session and routes into the inbox shell.
+- [x] Relaunch with a valid stored session skips onboarding.
+- [x] Expired session attempts silent refresh before showing onboarding.
+- [x] Failed refresh or invalid session returns the user to onboarding cleanly.
+- [x] Sign-out/disconnect clears stored auth state and returns to onboarding.
+- [x] Project builds cleanly on Debug configuration after auth integration.

@@ -56,6 +56,10 @@ struct KeychainSessionTokenStore: SessionTokenStore {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
+            // Device-local storage avoids syncing auth tokens to other devices.
+            kSecAttrSynchronizable as String: kCFBooleanFalse as Any,
+            // Supports launch-time session reads after the device has been unlocked once.
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
         ]
     }
 }

@@ -27,17 +27,28 @@ final class AppSessionController: ObservableObject {
         self.logger = logger
     }
 
-    func bootstrap() {
-        if authService.loadStoredSession() == nil {
-            route = .onboarding
-            inboxViewState = .loading
-            analyticsService.track(AnalyticsEvent(name: "app_bootstrap_routed_onboarding"))
-            logger.info("App bootstrapped to onboarding.", metadata: [:])
-        } else {
-            route = .inbox
-            inboxViewState = .empty(message: "Unread primary emails will appear here once Gmail is connected.")
-            analyticsService.track(AnalyticsEvent(name: "app_bootstrap_routed_inbox"))
-            logger.info("App bootstrapped to inbox.", metadata: [:])
+    func bootstrap() async {
+        do {
+            if try await authService.restoreValidSession() == nil {
+                route = .onboarding
+                inboxViewState = .loading
+                analyticsService.track(AnalyticsEvent(name: "app_bootstrap_routed_onboarding"))
+                logger.info("App bootstrapped to onboarding.", metadata: [:])
+            } else {
+                route = .inbox
+                inboxViewState = .empty(message: "Unread primary emails will appear here once Gmail is connected.")
+                analyticsService.track(AnalyticsEvent(name: "app_bootstrap_routed_inbox"))
+                logger.info("App bootstrapped to inbox.", metadata: [:])
+            }
+        } catch let error as AuthFlowError {
+            clearInvalidSessionAfterRefreshFailure()
+            presentError(AppError(authFlowError: error))
+        } catch let error as AppError {
+            clearInvalidSessionAfterRefreshFailure()
+            presentError(error)
+        } catch {
+            clearInvalidSessionAfterRefreshFailure()
+            presentError(.auth(message: error.localizedDescription))
         }
     }
 
@@ -63,7 +74,7 @@ final class AppSessionController: ObservableObject {
             do {
                 let session = try await authService.signIn(with: emailAddress)
                 guard authService.saveSession(session) else {
-                    presentError(.auth(message: "Sign-in succeeded, but the session could not be saved securely."))
+                    presentError(AppError(authFlowError: .persistenceFailed))
                     return
                 }
 
@@ -77,6 +88,8 @@ final class AppSessionController: ObservableObject {
                     )
                 )
                 presentBanner(message: "Signed in successfully.", style: .info)
+            } catch let error as AuthFlowError {
+                presentError(AppError(authFlowError: error))
             } catch let error as AppError {
                 presentError(error)
             } catch {
@@ -86,16 +99,25 @@ final class AppSessionController: ObservableObject {
     }
 
     func signOut() {
-        guard authService.clearSession() else {
-            presentError(.auth(message: "Could not clear the placeholder session from Keychain."))
-            return
-        }
+        Task {
+            do {
+                let revocationSucceeded = try await authService.disconnectCurrentSession()
+                route = .onboarding
+                inboxViewState = .loading
+                analyticsService.track(AnalyticsEvent(name: "placeholder_sign_out_completed"))
+                logger.info("Completed auth sign-out flow.", metadata: [:])
 
-        route = .onboarding
-        inboxViewState = .loading
-        analyticsService.track(AnalyticsEvent(name: "placeholder_sign_out_completed"))
-        logger.info("Completed placeholder sign-out flow.", metadata: [:])
-        presentBanner(message: "Placeholder session cleared.", style: .info)
+                if revocationSucceeded {
+                    presentBanner(message: "Signed out successfully.", style: .info)
+                } else {
+                    presentBanner(message: AuthFlowError.revocationFailed.message, style: .info)
+                }
+            } catch let error as AuthFlowError {
+                presentError(AppError(authFlowError: error))
+            } catch {
+                presentError(.auth(message: error.localizedDescription))
+            }
+        }
     }
 
     func dismissBanner() {
@@ -121,5 +143,13 @@ final class AppSessionController: ObservableObject {
 
     private func presentBanner(message: String, style: StatusBannerState.Style) {
         bannerState = StatusBannerState(message: message, style: style)
+    }
+
+    private func clearInvalidSessionAfterRefreshFailure() {
+        _ = authService.clearSession()
+        route = .onboarding
+        inboxViewState = .loading
+        analyticsService.track(AnalyticsEvent(name: "auth_refresh_routed_onboarding"))
+        logger.info("Routed to onboarding after refresh failure.", metadata: [:])
     }
 }

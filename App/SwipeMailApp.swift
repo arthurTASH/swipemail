@@ -40,7 +40,7 @@ struct SwipeMailApp: App {
                 }
             }
             .task {
-                sessionController.bootstrap()
+                await sessionController.bootstrap()
             }
             .onOpenURL { url in
                 sessionController.handleOpenURL(url)
