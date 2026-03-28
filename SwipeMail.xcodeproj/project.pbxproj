@@ -35,6 +35,7 @@
 		A1000000000000000000007A /* AuthProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000003E /* AuthProvider.swift */; };
 		A1000000000000000000007B /* AuthProviderRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000003F /* AuthProviderRouter.swift */; };
 		A1000000000000000000007C /* OAuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000080 /* OAuthCoordinator.swift */; };
+		A1000000000000000000007D /* AuthFlowError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000081 /* AuthFlowError.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +70,7 @@
 		A1000000000000000000003E /* AuthProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthProvider.swift; sourceTree = "<group>"; };
 		A1000000000000000000003F /* AuthProviderRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthProviderRouter.swift; sourceTree = "<group>"; };
 		A10000000000000000000080 /* OAuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthCoordinator.swift; sourceTree = "<group>"; };
+		A10000000000000000000081 /* AuthFlowError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowError.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +145,7 @@
 				A1000000000000000000002E /* AppError.swift */,
 				A1000000000000000000002F /* InboxViewState.swift */,
 				A1000000000000000000003E /* AuthProvider.swift */,
+				A10000000000000000000081 /* AuthFlowError.swift */,
 			);
 		};
 		A10000000000000000000035 /* Infrastructure */ = {
@@ -285,6 +288,7 @@
 				A1000000000000000000007A /* AuthProvider.swift in Sources */,
 				A1000000000000000000007B /* AuthProviderRouter.swift in Sources */,
 				A1000000000000000000007C /* OAuthCoordinator.swift in Sources */,
+				A1000000000000000000007D /* AuthFlowError.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
