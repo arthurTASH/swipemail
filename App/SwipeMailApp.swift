@@ -22,7 +22,10 @@ struct SwipeMailApp: App {
                 case .launching:
                     ProgressView("Loading SwipeMail")
                 case .onboarding:
-                    OnboardingView(connectAction: sessionController.completePlaceholderSignIn)
+                    OnboardingView(
+                        emailAddress: $sessionController.onboardingEmailAddress,
+                        connectAction: sessionController.beginSignIn
+                    )
                 case .inbox:
                     InboxPlaceholderView(
                         state: sessionController.inboxViewState,
@@ -38,6 +41,9 @@ struct SwipeMailApp: App {
             }
             .task {
                 sessionController.bootstrap()
+            }
+            .onOpenURL { url in
+                sessionController.handleOpenURL(url)
             }
         }
     }

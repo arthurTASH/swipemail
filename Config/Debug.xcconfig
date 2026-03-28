@@ -1,10 +1,18 @@
 // Debug configuration values for local development.
 // Replace placeholders with non-secret environment-specific values as needed.
+//
+// OAuth replacement steps:
+// 1. In Google Cloud Console, open the iOS OAuth client for the debug bundle ID.
+// 2. Copy the generated client ID into SWIPEMAIL_OAUTH_CLIENT_ID below.
+// 3. Copy the registered redirect URI into SWIPEMAIL_OAUTH_REDIRECT_URI below.
+// 4. Keep client secrets out of this repo; iOS clients should only need the client ID and redirect URI.
+// 5. Confirm the redirect URI here matches the value expected by the OAuth provider configuration.
 
 PRODUCT_BUNDLE_IDENTIFIER = com.swipemail.app.debug
 
-SWIPEMAIL_OAUTH_CLIENT_ID = REPLACE_WITH_DEBUG_OAUTH_CLIENT_ID
-SWIPEMAIL_OAUTH_REDIRECT_URI = REPLACE_WITH_DEBUG_REDIRECT_URI
+SWIPEMAIL_OAUTH_CLIENT_ID = 828484819720-d2rqovh4ch9i6k7vh5bp22oisktdefra.apps.googleusercontent.com
+SWIPEMAIL_OAUTH_REDIRECT_URI = com.googleusercontent.apps.828484819720-d2rqovh4ch9i6k7vh5bp22oisktdefra:/oauthredirectgreat
+SWIPEMAIL_OAUTH_CALLBACK_SCHEME = com.googleusercontent.apps.828484819720-d2rqovh4ch9i6k7vh5bp22oisktdefra
 
 SWIPEMAIL_GMAIL_API_BASE_URL = https:/$()/gmail.googleapis.com
 SWIPEMAIL_GMAIL_SCOPE_READONLY = https:/$()/www.googleapis.com/auth/gmail.readonly

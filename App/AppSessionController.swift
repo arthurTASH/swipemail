@@ -11,6 +11,7 @@ final class AppSessionController: ObservableObject {
     @Published private(set) var route: Route = .launching
     @Published private(set) var inboxViewState: InboxViewState = .loading
     @Published var bannerState: StatusBannerState?
+    @Published var onboardingEmailAddress = ""
 
     private let authService: AuthService
     private let analyticsService: AnalyticsService
@@ -40,18 +41,48 @@ final class AppSessionController: ObservableObject {
         }
     }
 
-    func completePlaceholderSignIn() {
-        let session = AuthSession(accessToken: "placeholder-token")
-        guard authService.saveSession(session) else {
-            presentError(.auth(message: "Could not store the placeholder session in Keychain."))
+    func beginSignIn() {
+        let emailAddress = onboardingEmailAddress
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+
+        guard !emailAddress.isEmpty else {
+            presentError(.auth(message: "Enter an email address to continue."))
             return
         }
 
-        route = .inbox
-        inboxViewState = .empty(message: "Placeholder inbox is empty. Gmail-backed messages will replace this state in Week 2.")
-        analyticsService.track(AnalyticsEvent(name: "placeholder_sign_in_completed"))
-        logger.info("Completed placeholder sign-in flow.", metadata: [:])
-        presentBanner(message: "Placeholder session saved.", style: .info)
+        let provider = authService.provider(for: emailAddress)
+        analyticsService.track(
+            AnalyticsEvent(
+                name: "auth_provider_resolved",
+                properties: ["provider": provider.analyticsLabel]
+            )
+        )
+
+        Task {
+            do {
+                let session = try await authService.signIn(with: emailAddress)
+                guard authService.saveSession(session) else {
+                    presentError(.auth(message: "Sign-in succeeded, but the session could not be saved securely."))
+                    return
+                }
+
+                route = .inbox
+                inboxViewState = .empty(message: "Placeholder inbox is empty. Gmail-backed messages will replace this state in Week 2.")
+                logger.info("Completed OAuth sign-in flow.", metadata: ["provider": session.provider.analyticsLabel])
+                analyticsService.track(
+                    AnalyticsEvent(
+                        name: "oauth_sign_in_completed",
+                        properties: ["provider": session.provider.analyticsLabel]
+                    )
+                )
+                presentBanner(message: "Signed in successfully.", style: .info)
+            } catch let error as AppError {
+                presentError(error)
+            } catch {
+                presentError(.auth(message: error.localizedDescription))
+            }
+        }
     }
 
     func signOut() {
@@ -69,6 +100,15 @@ final class AppSessionController: ObservableObject {
 
     func dismissBanner() {
         bannerState = nil
+    }
+
+    func handleOpenURL(_ url: URL) {
+        guard authService.resumeExternalUserAgentFlow(with: url) else {
+            logger.debug("Ignored incoming URL during auth handling.", metadata: ["url": url.absoluteString])
+            return
+        }
+
+        logger.info("Resumed external OAuth user agent flow.", metadata: [:])
     }
 
     private func presentError(_ error: AppError) {

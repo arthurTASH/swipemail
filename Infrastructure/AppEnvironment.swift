@@ -8,6 +8,7 @@ public struct AppEnvironment {
 
     public let oauthClientID: String
     public let oauthRedirectURI: String
+    public let oauthCallbackScheme: String
     public let gmailAPI: GmailAPI
 
     public static let current = try! AppEnvironment(bundle: .main)
@@ -15,6 +16,7 @@ public struct AppEnvironment {
     init(bundle: Bundle) throws {
         oauthClientID = try bundle.requiredString(for: "SwipeMailOAuthClientID")
         oauthRedirectURI = try bundle.requiredString(for: "SwipeMailOAuthRedirectURI")
+        oauthCallbackScheme = try bundle.requiredString(for: "SwipeMailOAuthCallbackScheme")
 
         let baseURLString = try bundle.requiredString(for: "SwipeMailGmailAPIBaseURL")
         guard let baseURL = URL(string: baseURLString) else {

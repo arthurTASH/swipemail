@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    @Binding var emailAddress: String
     let connectAction: () -> Void
 
     var body: some View {
@@ -16,7 +17,14 @@ struct OnboardingView: View {
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 24)
 
-            Button("Connect Gmail Placeholder", action: connectAction)
+            TextField("name@gmail.com", text: $emailAddress)
+                .textInputAutocapitalization(.never)
+                .keyboardType(.emailAddress)
+                .autocorrectionDisabled()
+                .textFieldStyle(.roundedBorder)
+                .padding(.horizontal, 24)
+
+            Button("Continue", action: connectAction)
                 .buttonStyle(.borderedProminent)
 
             Spacer()
