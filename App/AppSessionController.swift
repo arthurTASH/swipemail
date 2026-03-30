@@ -125,6 +125,8 @@ final class AppSessionController: ObservableObject {
     }
 
     func signOut() {
+        analyticsService.track(AnalyticsEvent(name: "sign_out_requested"))
+
         Task {
             do {
                 let revocationSucceeded = try await authService.disconnectCurrentSession()
@@ -151,6 +153,8 @@ final class AppSessionController: ObservableObject {
         guard route == .inbox else {
             return
         }
+
+        analyticsService.track(AnalyticsEvent(name: "inbox_reload_requested"))
 
         Task {
             await loadInbox()
@@ -223,32 +227,52 @@ final class AppSessionController: ObservableObject {
         }
 
         isDrawerPresented.toggle()
+        analyticsService.track(
+            AnalyticsEvent(name: isDrawerPresented ? "drawer_opened" : "drawer_closed")
+        )
     }
 
     func closeDrawer() {
         isDrawerPresented = false
+        analyticsService.track(AnalyticsEvent(name: "drawer_closed"))
     }
 
     func resumeSignedInFlow() {
+        analyticsService.track(
+            AnalyticsEvent(
+                name: "signed_in_flow_resumed",
+                properties: ["source": resumeSource]
+            )
+        )
         isDrawerPresented = false
         route = .inbox
     }
 
     func openSettings() {
+        analyticsService.track(AnalyticsEvent(name: "settings_opened"))
         isDrawerPresented = false
         route = .settings
     }
 
     func closeSettings() {
+        analyticsService.track(AnalyticsEvent(name: "settings_closed"))
         route = .inbox
     }
 
     func exitSignedInFlow() {
+        analyticsService.track(
+            AnalyticsEvent(
+                name: "signed_in_flow_exited",
+                properties: ["source": "drawer"]
+            )
+        )
         isDrawerPresented = false
         route = .exited
     }
 
     func disconnectFromSettings() {
+        analyticsService.track(AnalyticsEvent(name: "settings_disconnect_requested"))
+
         Task {
             do {
                 let revocationSucceeded = try await authService.disconnectCurrentSession()
@@ -272,11 +296,19 @@ final class AppSessionController: ObservableObject {
     }
 
     func exitFromSettings() {
+        analyticsService.track(
+            AnalyticsEvent(
+                name: "signed_in_flow_exited",
+                properties: ["source": "settings"]
+            )
+        )
         isDrawerPresented = false
         route = .exited
     }
 
     func retryFailedOperations() {
+        analyticsService.track(AnalyticsEvent(name: "sync_retry_requested"))
+
         Task {
             await queueService.retryFailedOperations()
             let result = await syncEngine.syncPendingWork()
@@ -436,6 +468,21 @@ final class AppSessionController: ObservableObject {
 
     private var offlineActionMessage: String {
         "You're offline. Reconnect to process inbox actions."
+    }
+
+    private var resumeSource: String {
+        if isDrawerPresented {
+            return "drawer"
+        }
+
+        switch route {
+        case .exited:
+            return "exited"
+        case .settings:
+            return "settings"
+        default:
+            return "inbox"
+        }
     }
 
     private func handleSyncResult(_ result: SyncExecutionResult) {

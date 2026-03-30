@@ -324,7 +324,9 @@ final class DefaultAuthService: AuthService {
         var request = URLRequest(url: revokeURL)
         request.httpMethod = "POST"
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-        request.httpBody = "token=\(tokenToRevoke)".data(using: .utf8)
+        var components = URLComponents()
+        components.queryItems = [URLQueryItem(name: "token", value: tokenToRevoke)]
+        request.httpBody = components.percentEncodedQuery?.data(using: .utf8)
 
         logger.info("Revoking Google auth token.", metadata: ["token": SensitiveValueRedactor.redact(tokenToRevoke)])
 

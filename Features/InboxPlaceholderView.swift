@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct InboxPlaceholderView: View {
+    @Environment(\.accessibilityReduceMotion) private var accessibilityReduceMotion
     @GestureState private var dragOffset: CGSize = .zero
     @State private var committedSwipe: CommittedSwipe?
     @State private var isAnimatingDismissal = false
@@ -21,15 +22,16 @@ struct InboxPlaceholderView: View {
                     .foregroundStyle(.tint)
                     .accessibilityHidden(true)
 
-                Text("Inbox Shell")
+                Text("Inbox")
                     .font(.title.bold())
                     .multilineTextAlignment(.center)
                     .accessibilityAddTraits(.isHeader)
 
                 content
 
-                Button("Clear Placeholder Session", action: signOutAction)
+                Button("Disconnect", action: signOutAction)
                     .buttonStyle(.bordered)
+                    .disabled(isAnimatingDismissal)
                     .accessibilityHint("Disconnects the current session and returns to onboarding.")
 
                 Spacer(minLength: 24)
@@ -37,6 +39,7 @@ struct InboxPlaceholderView: View {
             .frame(maxWidth: .infinity)
         }
         .padding()
+        .scrollIndicators(.hidden)
     }
 
     @ViewBuilder
@@ -191,11 +194,14 @@ struct InboxPlaceholderView: View {
                         }
                     }
                     .contextMenu {
-                        contextMenuActions
+                        if actionsEnabled {
+                            contextMenuActions
+                        }
                     }
-                    .gesture(isOffline ? nil : cardDragGesture)
-                    .animation(.spring(response: 0.24, dampingFraction: 0.78), value: activeCardOffset)
-                    .animation(.spring(response: 0.24, dampingFraction: 0.78), value: committedSwipe?.action)
+                    .gesture(actionsEnabled ? cardDragGesture : nil)
+                    .animation(cardAnimation, value: activeCardOffset)
+                    .animation(cardAnimation, value: committedSwipe?.action)
+                    .allowsHitTesting(actionsEnabled)
                     .accessibilityAction(named: Text("Mark as Read")) {
                         commitSwipe(.markRead)
                     }
@@ -295,7 +301,7 @@ struct InboxPlaceholderView: View {
         }
         .buttonStyle(.borderedProminent)
         .tint(tint)
-        .disabled(isOffline)
+        .disabled(!actionsEnabled)
         .accessibilityHint(accessibilityHint(for: action))
     }
 
@@ -345,7 +351,8 @@ struct InboxPlaceholderView: View {
     }
 
     private var dragProgress: CGFloat {
-        let dominantMagnitude = max(abs(dragOffset.width), abs(dragOffset.height))
+        let activeOffset = activeCardOffset
+        let dominantMagnitude = max(abs(activeOffset.width), abs(activeOffset.height))
         return min(dominantMagnitude / commitThreshold, 1)
     }
 
@@ -520,11 +527,15 @@ struct InboxPlaceholderView: View {
     }
 
     private func commitSwipe(_ action: SwipeAction) {
+        guard actionsEnabled else {
+            return
+        }
+
         isAnimatingDismissal = true
         committedSwipe = CommittedSwipe(action: action)
 
         Task {
-            try? await Task.sleep(for: .milliseconds(220))
+            try? await Task.sleep(for: .milliseconds(accessibilityReduceMotion ? 80 : 220))
 
             await MainActor.run {
                 actionHandler(action)
@@ -532,6 +543,16 @@ struct InboxPlaceholderView: View {
                 isAnimatingDismissal = false
             }
         }
+    }
+
+    private var actionsEnabled: Bool {
+        !isOffline && !isAnimatingDismissal
+    }
+
+    private var cardAnimation: Animation {
+        accessibilityReduceMotion
+            ? .easeOut(duration: 0.12)
+            : .spring(response: 0.24, dampingFraction: 0.78)
     }
 }
 
