@@ -2,6 +2,7 @@ import SwiftUI
 
 @main
 struct SwipeMailApp: App {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var sessionController: AppSessionController
 
     init() {
@@ -12,6 +13,7 @@ struct SwipeMailApp: App {
                 gmailService: dependencies.gmailService,
                 queueService: dependencies.queueService,
                 syncEngine: dependencies.syncEngine,
+                connectivityMonitor: dependencies.connectivityMonitor,
                 analyticsService: dependencies.analyticsService,
                 logger: dependencies.logger
             )
@@ -24,6 +26,7 @@ struct SwipeMailApp: App {
                 switch sessionController.route {
                 case .launching:
                     ProgressView("Loading SwipeMail")
+                        .accessibilityLabel("Loading SwipeMail")
                 case .onboarding:
                     OnboardingView(
                         emailAddress: $sessionController.onboardingEmailAddress,
@@ -33,6 +36,7 @@ struct SwipeMailApp: App {
                     ZStack(alignment: .leading) {
                         InboxPlaceholderView(
                             state: sessionController.inboxViewState,
+                            isOffline: !sessionController.connectivityStatus.isOnline,
                             actionHandler: sessionController.apply,
                             retryAction: sessionController.reloadInbox,
                             signOutAction: sessionController.signOut
@@ -45,6 +49,8 @@ struct SwipeMailApp: App {
                                     .frame(width: 44, height: 44)
                                     .background(.thinMaterial, in: Circle())
                             }
+                            .accessibilityLabel("Open navigation menu")
+                            .accessibilityHint("Opens the side drawer with resume, exit, and settings.")
                             .padding(.leading, 16)
                             .padding(.top, 12)
                         }
@@ -78,6 +84,9 @@ struct SwipeMailApp: App {
             .onOpenURL { url in
                 sessionController.handleOpenURL(url)
             }
+            .onChange(of: scenePhase) { _, newPhase in
+                sessionController.handleScenePhaseChange(newPhase)
+            }
         }
     }
 
@@ -91,6 +100,7 @@ struct SwipeMailApp: App {
 
                 Button("Close", action: sessionController.closeDrawer)
                     .font(.subheadline.weight(.semibold))
+                    .accessibilityHint("Closes the navigation drawer.")
             }
 
             VStack(alignment: .leading, spacing: 12) {
@@ -100,9 +110,11 @@ struct SwipeMailApp: App {
 
                 drawerPlaceholderRow(title: "Resume", systemImage: "play.fill")
                     .onTapGesture(perform: sessionController.resumeSignedInFlow)
+                    .accessibilityAddTraits(.isButton)
 
                 drawerPlaceholderRow(title: "Exit", systemImage: "rectangle.portrait.and.arrow.right")
                     .onTapGesture(perform: sessionController.exitSignedInFlow)
+                    .accessibilityAddTraits(.isButton)
             }
 
             Spacer()
@@ -114,6 +126,7 @@ struct SwipeMailApp: App {
 
                 drawerPlaceholderRow(title: "Settings", systemImage: "gearshape.fill")
                     .onTapGesture(perform: sessionController.openSettings)
+                    .accessibilityAddTraits(.isButton)
             }
         }
         .padding(24)
@@ -145,74 +158,81 @@ struct SwipeMailApp: App {
     }
 
     private var settingsScreen: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Button(action: sessionController.closeSettings) {
-                    Label("Back", systemImage: "chevron.left")
+        ScrollView {
+            VStack(spacing: 0) {
+                HStack {
+                    Button(action: sessionController.closeSettings) {
+                        Label("Back", systemImage: "chevron.left")
+                            .font(.subheadline.weight(.semibold))
+                    }
+                    .accessibilityHint("Returns to the inbox without changing account state.")
+
+                    Spacer()
+
+                    Text("Settings")
+                        .font(.headline.weight(.bold))
+
+                    Spacer()
+
+                    Button("Close", action: sessionController.closeSettings)
                         .font(.subheadline.weight(.semibold))
+                        .accessibilityHint("Closes settings and returns to the inbox.")
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 18)
 
                 Spacer()
 
-                Text("Settings")
-                    .font(.headline.weight(.bold))
+                VStack(spacing: 18) {
+                    Text("Settings")
+                        .font(.title.bold())
+
+                    Text("Account and session controls live here.")
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(.secondary)
+                        .padding(.horizontal, 24)
+
+                    VStack(spacing: 14) {
+                        Button(action: sessionController.disconnectFromSettings) {
+                            settingsActionLabel(title: "DISCONNECT", tint: .red)
+                        }
+                        .accessibilityHint("Disconnects the account and returns to onboarding.")
+
+                        Button(action: sessionController.exitFromSettings) {
+                            settingsActionLabel(title: "EXIT")
+                        }
+                        .accessibilityHint("Leaves the signed-in flow but preserves the current session.")
+                    }
+                    .padding(.top, 8)
+                }
+                .frame(maxWidth: 360)
+                .padding(28)
+                .background(
+                    RoundedRectangle(cornerRadius: 32, style: .continuous)
+                        .fill(Color(.secondarySystemBackground))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 32, style: .continuous)
+                        .stroke(Color.primary.opacity(0.06), lineWidth: 1)
+                )
+                .shadow(color: Color.black.opacity(0.08), radius: 20, y: 10)
 
                 Spacer()
-
-                Button("Close", action: sessionController.closeSettings)
-                    .font(.subheadline.weight(.semibold))
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 18)
-
-            Spacer()
-
-            VStack(spacing: 18) {
-                Text("Settings")
-                    .font(.title.bold())
-
-                Text("Account and session controls live here.")
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
-                    .padding(.horizontal, 24)
-
-                VStack(spacing: 14) {
-                    Button(action: sessionController.disconnectFromSettings) {
-                        settingsActionLabel(title: "DISCONNECT", tint: .red)
-                    }
-
-                    Button(action: sessionController.exitFromSettings) {
-                        settingsActionLabel(title: "EXIT")
-                    }
-                }
-                .padding(.top, 8)
-            }
-            .frame(maxWidth: 360)
-            .padding(28)
+            .frame(maxWidth: .infinity)
+            .padding()
             .background(
-                RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .fill(Color(.secondarySystemBackground))
+                LinearGradient(
+                    colors: [
+                        Color(.systemBackground),
+                        Color(.systemGray6),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 32, style: .continuous)
-                    .stroke(Color.primary.opacity(0.06), lineWidth: 1)
-            )
-            .shadow(color: Color.black.opacity(0.08), radius: 20, y: 10)
-
-            Spacer()
         }
-        .padding()
-        .background(
-            LinearGradient(
-                colors: [
-                    Color(.systemBackground),
-                    Color(.systemGray6),
-                ],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
-        )
     }
 
     private var exitedPlaceholder: some View {
@@ -233,6 +253,7 @@ struct SwipeMailApp: App {
 
             Button("Resume", action: sessionController.resumeSignedInFlow)
                 .buttonStyle(.borderedProminent)
+                .accessibilityHint("Returns to the inbox using the preserved session.")
 
             Spacer()
         }

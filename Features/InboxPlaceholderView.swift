@@ -6,27 +6,35 @@ struct InboxPlaceholderView: View {
     @State private var isAnimatingDismissal = false
 
     let state: InboxViewState
+    let isOffline: Bool
     let actionHandler: (SwipeAction) -> Void
     let retryAction: () -> Void
     let signOutAction: () -> Void
 
     var body: some View {
-        VStack(spacing: 20) {
-            Spacer()
+        ScrollView {
+            VStack(spacing: 20) {
+                Spacer(minLength: 24)
 
-            Image(systemName: "tray.full")
-                .font(.system(size: 40))
-                .foregroundStyle(.tint)
+                Image(systemName: "tray.full")
+                    .font(.system(size: 40))
+                    .foregroundStyle(.tint)
+                    .accessibilityHidden(true)
 
-            Text("Inbox Shell")
-                .font(.title.bold())
+                Text("Inbox Shell")
+                    .font(.title.bold())
+                    .multilineTextAlignment(.center)
+                    .accessibilityAddTraits(.isHeader)
 
-            content
+                content
 
-            Button("Clear Placeholder Session", action: signOutAction)
-                .buttonStyle(.bordered)
+                Button("Clear Placeholder Session", action: signOutAction)
+                    .buttonStyle(.bordered)
+                    .accessibilityHint("Disconnects the current session and returns to onboarding.")
 
-            Spacer()
+                Spacer(minLength: 24)
+            }
+            .frame(maxWidth: .infinity)
         }
         .padding()
     }
@@ -91,9 +99,11 @@ struct InboxPlaceholderView: View {
             HStack(spacing: 12) {
                 Button("Check Again", action: retryAction)
                     .buttonStyle(.borderedProminent)
+                    .accessibilityHint("Checks Gmail again for unread primary messages.")
 
                 Button("Exit for Now", action: signOutAction)
                     .buttonStyle(.bordered)
+                    .accessibilityHint("Signs out of the placeholder session and returns to onboarding.")
             }
         }
         .frame(maxWidth: 380)
@@ -125,6 +135,7 @@ struct InboxPlaceholderView: View {
 
             Button("Try Again", action: retryAction)
                 .buttonStyle(.borderedProminent)
+                .accessibilityHint("Attempts the Gmail fetch again.")
         }
         .frame(maxWidth: 360)
     }
@@ -133,12 +144,17 @@ struct InboxPlaceholderView: View {
     private func readyContent(messages: [GmailMessage]) -> some View {
         if !messages.isEmpty {
             VStack(spacing: 16) {
+                if isOffline {
+                    offlineBanner
+                }
+
                 messageStack(messages: messages)
                 actionRow
 
                 Text("\(messages.count) unread primary message\(messages.count == 1 ? "" : "s") in queue")
                     .font(.footnote.weight(.medium))
                     .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
             }
             .frame(maxWidth: 420)
         } else {
@@ -177,9 +193,21 @@ struct InboxPlaceholderView: View {
                     .contextMenu {
                         contextMenuActions
                     }
-                    .gesture(cardDragGesture)
+                    .gesture(isOffline ? nil : cardDragGesture)
                     .animation(.spring(response: 0.24, dampingFraction: 0.78), value: activeCardOffset)
                     .animation(.spring(response: 0.24, dampingFraction: 0.78), value: committedSwipe?.action)
+                    .accessibilityAction(named: Text("Mark as Read")) {
+                        commitSwipe(.markRead)
+                    }
+                    .accessibilityAction(named: Text("Delete")) {
+                        commitSwipe(.delete)
+                    }
+                    .accessibilityAction(named: Text("Follow Up")) {
+                        commitSwipe(.followUp)
+                    }
+                    .accessibilityAction(named: Text("Mark as Spam")) {
+                        commitSwipe(.spam)
+                    }
             }
         }
         .padding(.top, messages.count > 1 ? 6 : 0)
@@ -251,7 +279,7 @@ struct InboxPlaceholderView: View {
         action: SwipeAction
     ) -> some View {
         Button {
-            actionHandler(action)
+            commitSwipe(action)
         } label: {
             VStack(spacing: 6) {
                 Image(systemName: systemImage)
@@ -267,6 +295,34 @@ struct InboxPlaceholderView: View {
         }
         .buttonStyle(.borderedProminent)
         .tint(tint)
+        .disabled(isOffline)
+        .accessibilityHint(accessibilityHint(for: action))
+    }
+
+    private var offlineBanner: some View {
+        HStack(alignment: .center, spacing: 10) {
+            Image(systemName: "wifi.slash")
+                .foregroundStyle(.orange)
+
+            Text("Offline: reading is available, but swipe actions are paused until you reconnect.")
+                .font(.footnote.weight(.medium))
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.leading)
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.orange.opacity(0.12))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(Color.orange.opacity(0.18), lineWidth: 1)
+        )
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Offline mode. Reading is available, but swipe actions are paused until you reconnect.")
     }
 
     private func resolvedAction(for translation: CGSize) -> SwipeAction? {
@@ -322,16 +378,18 @@ struct InboxPlaceholderView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .top, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(message.sender)
-                        .font(.headline.weight(.semibold))
-                        .foregroundStyle(.primary)
-                        .lineLimit(1)
+            Text(message.sender)
+                .font(.headline.weight(.semibold))
+                .foregroundStyle(.primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
 
-                    Text(message.subject)
-                        .font(.title3.weight(.semibold))
-                        .foregroundStyle(.primary)
-                        .lineLimit(2)
-                }
+            Text(message.subject)
+                .font(.title3.weight(.semibold))
+                .foregroundStyle(.primary)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
+        }
 
                 Spacer(minLength: 8)
 
@@ -344,6 +402,7 @@ struct InboxPlaceholderView: View {
                 .font(.body)
                 .foregroundStyle(.secondary)
                 .lineLimit(5)
+                .minimumScaleFactor(0.85)
 
             HStack {
                 Label("Primary", systemImage: "tray")
@@ -369,6 +428,9 @@ struct InboxPlaceholderView: View {
         )
         .shadow(color: Color.black.opacity(0.06), radius: 18, y: 8)
         .padding(.horizontal, 4)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(cardAccessibilityLabel(for: message))
+        .accessibilityHint("Swipe up to mark read, down to delete, right to follow up, or left to mark as spam. You can also long-press for actions.")
     }
 
     private func dragBadge(for action: SwipeAction) -> some View {
@@ -437,6 +499,24 @@ struct InboxPlaceholderView: View {
         }
 
         return receivedDateFormatter.localizedString(for: receivedAt, relativeTo: .now)
+    }
+
+    private func cardAccessibilityLabel(for message: GmailMessage) -> String {
+        let receivedLabel = receivedDateLabel(for: message)
+        return "Email from \(message.sender). Subject: \(message.subject). Preview: \(message.preview). Received \(receivedLabel)."
+    }
+
+    private func accessibilityHint(for action: SwipeAction) -> String {
+        switch action {
+        case .markRead:
+            return "Marks the current email as read."
+        case .followUp:
+            return "Adds the follow up label and advances to the next email."
+        case .delete:
+            return "Moves the current email to trash."
+        case .spam:
+            return "Marks the current email as spam."
+        }
     }
 
     private func commitSwipe(_ action: SwipeAction) {
