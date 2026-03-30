@@ -33,7 +33,12 @@ struct DefaultGmailService: GmailService {
         }
 
         let request = try makeListMessagesRequest(accessToken: session.accessToken)
-        let (data, response) = try await urlSession.data(for: request)
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await urlSession.data(for: request)
+        } catch {
+            throw AppError.network(message: userFacingTransportMessage(for: error))
+        }
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw AppError.network(message: "Gmail API did not return a valid HTTP response.")
@@ -54,7 +59,13 @@ struct DefaultGmailService: GmailService {
                     properties: ["statusCode": String(httpResponse.statusCode)]
                 )
             )
-            throw AppError.network(message: apiError ?? "Gmail API request failed.")
+            throw AppError.network(
+                message: userFacingHTTPMessage(
+                    statusCode: httpResponse.statusCode,
+                    apiError: apiError,
+                    fallback: "Gmail API request failed."
+                )
+            )
         }
 
         let payload: GmailListMessagesResponse
@@ -173,7 +184,12 @@ struct DefaultGmailService: GmailService {
             addLabelIDs: addLabelIDs,
             removeLabelIDs: removeLabelIDs
         )
-        let (data, response) = try await urlSession.data(for: request)
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await urlSession.data(for: request)
+        } catch {
+            throw AppError.network(message: userFacingTransportMessage(for: error))
+        }
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw AppError.network(message: "Gmail API did not return a valid HTTP response.")
@@ -195,7 +211,13 @@ struct DefaultGmailService: GmailService {
                     properties: ["statusCode": String(httpResponse.statusCode)]
                 )
             )
-            throw AppError.network(message: apiError ?? "Gmail modify request failed.")
+            throw AppError.network(
+                message: userFacingHTTPMessage(
+                    statusCode: httpResponse.statusCode,
+                    apiError: apiError,
+                    fallback: "Gmail modify request failed."
+                )
+            )
         }
 
         analyticsService.track(
@@ -237,7 +259,12 @@ struct DefaultGmailService: GmailService {
             accessToken: accessToken,
             method: "GET"
         )
-        let (data, response) = try await urlSession.data(for: request)
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await urlSession.data(for: request)
+        } catch {
+            throw AppError.network(message: userFacingTransportMessage(for: error))
+        }
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw AppError.network(message: "Gmail API did not return a valid HTTP response.")
@@ -245,7 +272,13 @@ struct DefaultGmailService: GmailService {
 
         guard 200..<300 ~= httpResponse.statusCode else {
             let apiError = decodeAPIError(from: data)
-            throw AppError.network(message: apiError ?? "Gmail labels request failed.")
+            throw AppError.network(
+                message: userFacingHTTPMessage(
+                    statusCode: httpResponse.statusCode,
+                    apiError: apiError,
+                    fallback: "Gmail labels request failed."
+                )
+            )
         }
 
         do {
@@ -267,7 +300,12 @@ struct DefaultGmailService: GmailService {
             method: "POST",
             body: body
         )
-        let (data, response) = try await urlSession.data(for: request)
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await urlSession.data(for: request)
+        } catch {
+            throw AppError.network(message: userFacingTransportMessage(for: error))
+        }
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw AppError.network(message: "Gmail API did not return a valid HTTP response.")
@@ -275,7 +313,13 @@ struct DefaultGmailService: GmailService {
 
         guard 200..<300 ~= httpResponse.statusCode else {
             let apiError = decodeAPIError(from: data)
-            throw AppError.network(message: apiError ?? "Gmail label creation failed.")
+            throw AppError.network(
+                message: userFacingHTTPMessage(
+                    statusCode: httpResponse.statusCode,
+                    apiError: apiError,
+                    fallback: "Gmail label creation failed."
+                )
+            )
         }
 
         do {
@@ -287,7 +331,12 @@ struct DefaultGmailService: GmailService {
 
     private func fetchMessageDetail(id: String, accessToken: String) async throws -> GmailMessageDetailResponse {
         let request = try makeMessageDetailRequest(id: id, accessToken: accessToken)
-        let (data, response) = try await urlSession.data(for: request)
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await urlSession.data(for: request)
+        } catch {
+            throw AppError.network(message: userFacingTransportMessage(for: error))
+        }
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw AppError.network(message: "Gmail API did not return a valid HTTP response.")
@@ -303,7 +352,13 @@ struct DefaultGmailService: GmailService {
                     "message": apiError ?? "unknown",
                 ]
             )
-            throw AppError.network(message: apiError ?? "Gmail message detail request failed.")
+            throw AppError.network(
+                message: userFacingHTTPMessage(
+                    statusCode: httpResponse.statusCode,
+                    apiError: apiError,
+                    fallback: "Gmail message detail request failed."
+                )
+            )
         }
 
         do {
@@ -376,7 +431,12 @@ struct DefaultGmailService: GmailService {
             accessToken: accessToken,
             method: "POST"
         )
-        let (data, response) = try await urlSession.data(for: request)
+        let (data, response): (Data, URLResponse)
+        do {
+            (data, response) = try await urlSession.data(for: request)
+        } catch {
+            throw AppError.network(message: userFacingTransportMessage(for: error))
+        }
 
         guard let httpResponse = response as? HTTPURLResponse else {
             throw AppError.network(message: "Gmail API did not return a valid HTTP response.")
@@ -394,7 +454,13 @@ struct DefaultGmailService: GmailService {
                     uniquingKeysWith: { _, new in new }
                 )
             )
-            throw AppError.network(message: apiError ?? errorMessage)
+            throw AppError.network(
+                message: userFacingHTTPMessage(
+                    statusCode: httpResponse.statusCode,
+                    apiError: apiError,
+                    fallback: errorMessage
+                )
+            )
         }
 
         analyticsService.track(AnalyticsEvent(name: analyticsName, properties: metadata))
@@ -432,6 +498,38 @@ struct DefaultGmailService: GmailService {
 
     private func deduplicated(_ values: [String]) -> [String] {
         Array(Set(values)).sorted()
+    }
+
+    private func userFacingHTTPMessage(statusCode: Int, apiError: String?, fallback: String) -> String {
+        switch statusCode {
+        case 401:
+            return "Your Gmail session expired. Sign in again to continue."
+        case 403:
+            return apiError ?? "SwipeMail does not currently have permission to complete that Gmail request."
+        case 429:
+            return "Gmail is rate limiting requests right now. Try again in a moment."
+        case 500..<600:
+            return "Gmail is temporarily unavailable. Try again in a moment."
+        default:
+            return apiError ?? fallback
+        }
+    }
+
+    private func userFacingTransportMessage(for error: Error) -> String {
+        guard let urlError = error as? URLError else {
+            return error.localizedDescription
+        }
+
+        switch urlError.code {
+        case .notConnectedToInternet, .dataNotAllowed:
+            return "You're offline. Reconnect to continue talking to Gmail."
+        case .networkConnectionLost, .timedOut:
+            return "The Gmail connection was interrupted. Try again."
+        case .cannotConnectToHost, .cannotFindHost, .dnsLookupFailed:
+            return "SwipeMail could not reach Gmail. Try again in a moment."
+        default:
+            return urlError.localizedDescription
+        }
     }
 
     private func projectMessage(from detail: GmailMessageDetailResponse) -> GmailMessage {
