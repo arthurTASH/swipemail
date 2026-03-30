@@ -1,10 +1,18 @@
 // Release configuration values for production builds.
 // Replace placeholders with production environment values before distribution.
+//
+// OAuth replacement steps:
+// 1. In Google Cloud Console, open the iOS OAuth client for the release bundle ID.
+// 2. Copy the generated client ID into SWIPEMAIL_OAUTH_CLIENT_ID below.
+// 3. Copy the registered redirect URI into SWIPEMAIL_OAUTH_REDIRECT_URI below.
+// 4. Keep client secrets out of this repo; iOS clients should only need the client ID and redirect URI.
+// 5. Confirm the redirect URI here matches the value expected by the OAuth provider configuration.
 
 PRODUCT_BUNDLE_IDENTIFIER = com.swipemail.app
 
-SWIPEMAIL_OAUTH_CLIENT_ID = REPLACE_WITH_RELEASE_OAUTH_CLIENT_ID
-SWIPEMAIL_OAUTH_REDIRECT_URI = REPLACE_WITH_RELEASE_REDIRECT_URI
+SWIPEMAIL_OAUTH_CLIENT_ID = 828484819720-mbt09ookelm2qll1a9hfa8tdpcd0877d.apps.googleusercontent.com
+SWIPEMAIL_OAUTH_REDIRECT_URI = com.googleusercontent.apps.828484819720-mbt09ookelm2qll1a9hfa8tdpcd0877d:/oauthredirect
+SWIPEMAIL_OAUTH_CALLBACK_SCHEME = com.googleusercontent.apps.828484819720-mbt09ookelm2qll1a9hfa8tdpcd0877d
 
 SWIPEMAIL_GMAIL_API_BASE_URL = https:/$()/gmail.googleapis.com
 SWIPEMAIL_GMAIL_SCOPE_READONLY = https:/$()/www.googleapis.com/auth/gmail.readonly

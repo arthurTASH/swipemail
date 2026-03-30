@@ -10,6 +10,8 @@ protocol SessionTokenStore {
 struct KeychainSessionTokenStore: SessionTokenStore {
     private let service = "com.swipemail.auth"
     private let account = "default-session"
+    private let encoder = JSONEncoder()
+    private let decoder = JSONDecoder()
 
     func loadSession() -> AuthSession? {
         var query = baseQuery()
@@ -21,16 +23,15 @@ struct KeychainSessionTokenStore: SessionTokenStore {
 
         guard status == errSecSuccess,
               let data = item as? Data,
-              let token = String(data: data, encoding: .utf8),
-              !token.isEmpty else {
+              let session = try? decoder.decode(AuthSession.self, from: data) else {
             return nil
         }
 
-        return AuthSession(accessToken: token)
+        return session
     }
 
     func saveSession(_ session: AuthSession) -> Bool {
-        guard let data = session.accessToken.data(using: .utf8) else {
+        guard let data = try? encoder.encode(session) else {
             return false
         }
 
@@ -55,6 +56,10 @@ struct KeychainSessionTokenStore: SessionTokenStore {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: account,
+            // Device-local storage avoids syncing auth tokens to other devices.
+            kSecAttrSynchronizable as String: kCFBooleanFalse as Any,
+            // Supports launch-time session reads after the device has been unlocked once.
+            kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
         ]
     }
 }

@@ -11,4 +11,13 @@ public enum AppError: Error, Equatable, Sendable {
             return message
         }
     }
+
+    public init(authFlowError: AuthFlowError) {
+        switch authFlowError {
+        case .unknown:
+            self = .unknown(message: authFlowError.message)
+        default:
+            self = .auth(message: authFlowError.message)
+        }
+    }
 }

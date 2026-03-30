@@ -30,8 +30,23 @@
 	<string>$(SWIPEMAIL_GMAIL_SCOPE_READONLY)</string>
 	<key>SwipeMailOAuthClientID</key>
 	<string>$(SWIPEMAIL_OAUTH_CLIENT_ID)</string>
+	<key>SwipeMailOAuthCallbackScheme</key>
+	<string>$(SWIPEMAIL_OAUTH_CALLBACK_SCHEME)</string>
 	<key>SwipeMailOAuthRedirectURI</key>
 	<string>$(SWIPEMAIL_OAUTH_REDIRECT_URI)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.swipemail.oauth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>$(SWIPEMAIL_OAUTH_CALLBACK_SCHEME)</string>
+			</array>
+		</dict>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
