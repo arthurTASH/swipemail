@@ -5,6 +5,7 @@ struct AppDependencies {
     let gmailService: GmailService
     let queueService: QueueService
     let syncEngine: SyncEngine
+    let connectivityMonitor: ConnectivityMonitoring
     let analyticsService: AnalyticsService
     let logger: AppLogger
 
@@ -17,6 +18,7 @@ struct AppDependencies {
         let environment = AppEnvironment.current
         let coordinator = OAuthCoordinator()
         let queueService = InMemoryQueueService()
+        let connectivityMonitor = NetworkConnectivityMonitor()
         let gmailService = DefaultGmailService(
             tokenStore: tokenStore,
             environment: environment,
@@ -41,6 +43,7 @@ struct AppDependencies {
                 analyticsService: analyticsService,
                 logger: logger
             ),
+            connectivityMonitor: connectivityMonitor,
             analyticsService: analyticsService,
             logger: logger
         )

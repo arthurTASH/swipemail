@@ -1,4 +1,5 @@
 import Foundation
+import SwiftUI
 
 @MainActor
 final class AppSessionController: ObservableObject {
@@ -16,11 +17,13 @@ final class AppSessionController: ObservableObject {
     @Published var onboardingEmailAddress = ""
     @Published private(set) var hasFailedSyncOperations = false
     @Published private(set) var isDrawerPresented = false
+    @Published private(set) var connectivityStatus: ConnectivityStatus
 
     private let authService: AuthService
     private let gmailService: GmailService
     private let queueService: QueueService
     private let syncEngine: SyncEngine
+    private let connectivityMonitor: ConnectivityMonitoring
     private let analyticsService: AnalyticsService
     private let logger: AppLogger
 
@@ -29,6 +32,7 @@ final class AppSessionController: ObservableObject {
         gmailService: GmailService,
         queueService: QueueService,
         syncEngine: SyncEngine,
+        connectivityMonitor: ConnectivityMonitoring,
         analyticsService: AnalyticsService,
         logger: AppLogger
     ) {
@@ -36,8 +40,14 @@ final class AppSessionController: ObservableObject {
         self.gmailService = gmailService
         self.queueService = queueService
         self.syncEngine = syncEngine
+        self.connectivityMonitor = connectivityMonitor
         self.analyticsService = analyticsService
         self.logger = logger
+        connectivityStatus = connectivityMonitor.currentStatus
+
+        Task {
+            await observeConnectivity()
+        }
     }
 
     func bootstrap() async {
@@ -148,6 +158,21 @@ final class AppSessionController: ObservableObject {
     }
 
     func apply(_ action: SwipeAction) {
+        guard connectivityStatus.isOnline else {
+            analyticsService.track(
+                AnalyticsEvent(
+                    name: "inbox_action_blocked_offline",
+                    properties: ["action": action.analyticsLabel]
+                )
+            )
+            logger.info(
+                "Blocked inbox action while offline.",
+                metadata: ["action": action.analyticsLabel]
+            )
+            presentBanner(message: offlineActionMessage, style: .error)
+            return
+        }
+
         guard case let .ready(messages) = inboxViewState, let currentMessage = messages.first else {
             return
         }
@@ -270,6 +295,16 @@ final class AppSessionController: ObservableObject {
         logger.info("Resumed external OAuth user agent flow.", metadata: [:])
     }
 
+    func handleScenePhaseChange(_ phase: ScenePhase) {
+        guard phase == .active else {
+            return
+        }
+
+        Task {
+            await handleForegroundResume()
+        }
+    }
+
     private func presentError(_ error: AppError) {
         logger.error("Presented app error.", metadata: ["message": error.message])
         bannerState = StatusBannerState(message: error.message, style: .error)
@@ -280,6 +315,66 @@ final class AppSessionController: ObservableObject {
 
     private func presentBanner(message: String, style: StatusBannerState.Style) {
         bannerState = StatusBannerState(message: message, style: style)
+    }
+
+    private func observeConnectivity() async {
+        for await status in connectivityMonitor.updates() {
+            guard status != connectivityStatus else {
+                continue
+            }
+
+            connectivityStatus = status
+            analyticsService.track(
+                AnalyticsEvent(
+                    name: "connectivity_status_changed",
+                    properties: ["status": status.isOnline ? "online" : "offline"]
+                )
+            )
+            logger.info(
+                "Connectivity status changed.",
+                metadata: ["status": status.isOnline ? "online" : "offline"]
+            )
+        }
+    }
+
+    private func handleForegroundResume() async {
+        guard route == .inbox || route == .exited || route == .settings else {
+            return
+        }
+
+        let failedOperations = await queueService.failedOperations()
+        guard !failedOperations.isEmpty else {
+            return
+        }
+
+        hasFailedSyncOperations = true
+        analyticsService.track(
+            AnalyticsEvent(
+                name: "foreground_resume_with_failed_operations",
+                properties: ["failedOperationCount": String(failedOperations.count)]
+            )
+        )
+        logger.info(
+            "Foreground resume detected failed queue operations.",
+            metadata: ["failedOperationCount": String(failedOperations.count)]
+        )
+
+        if connectivityStatus.isOnline {
+            await queueService.retryFailedOperations()
+            let result = await syncEngine.syncPendingWork()
+            handleSyncResult(result)
+
+            if result.failedOperations.isEmpty {
+                presentBanner(message: "Pending inbox actions finished syncing.", style: .info)
+            }
+        } else {
+            bannerState = StatusBannerState(
+                message: offlineActionMessage,
+                style: .error,
+                actionTitle: "Retry",
+                action: retryFailedOperations
+            )
+        }
     }
 
     private func clearInvalidSessionAfterRefreshFailure() {
@@ -337,6 +432,10 @@ final class AppSessionController: ObservableObject {
         case .spam:
             return "Queued for spam."
         }
+    }
+
+    private var offlineActionMessage: String {
+        "You're offline. Reconnect to process inbox actions."
     }
 
     private func handleSyncResult(_ result: SyncExecutionResult) {
