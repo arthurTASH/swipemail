@@ -6,6 +6,8 @@ final class AppSessionController: ObservableObject {
         case launching
         case onboarding
         case inbox
+        case settings
+        case exited
     }
 
     @Published private(set) var route: Route = .launching
@@ -13,6 +15,7 @@ final class AppSessionController: ObservableObject {
     @Published var bannerState: StatusBannerState?
     @Published var onboardingEmailAddress = ""
     @Published private(set) var hasFailedSyncOperations = false
+    @Published private(set) var isDrawerPresented = false
 
     private let authService: AuthService
     private let gmailService: GmailService
@@ -41,11 +44,13 @@ final class AppSessionController: ObservableObject {
         do {
             if try await authService.restoreValidSession() == nil {
                 route = .onboarding
+                isDrawerPresented = false
                 inboxViewState = .loading
                 analyticsService.track(AnalyticsEvent(name: "app_bootstrap_routed_onboarding"))
                 logger.info("App bootstrapped to onboarding.", metadata: [:])
             } else {
                 route = .inbox
+                isDrawerPresented = false
                 analyticsService.track(AnalyticsEvent(name: "app_bootstrap_routed_inbox"))
                 logger.info("App bootstrapped to inbox.", metadata: [:])
                 await loadInbox()
@@ -89,6 +94,7 @@ final class AppSessionController: ObservableObject {
                 }
 
                 route = .inbox
+                isDrawerPresented = false
                 logger.info("Completed OAuth sign-in flow.", metadata: ["provider": session.provider.analyticsLabel])
                 analyticsService.track(
                     AnalyticsEvent(
@@ -113,6 +119,7 @@ final class AppSessionController: ObservableObject {
             do {
                 let revocationSucceeded = try await authService.disconnectCurrentSession()
                 route = .onboarding
+                isDrawerPresented = false
                 inboxViewState = .loading
                 analyticsService.track(AnalyticsEvent(name: "placeholder_sign_out_completed"))
                 logger.info("Completed auth sign-out flow.", metadata: [:])
@@ -185,6 +192,65 @@ final class AppSessionController: ObservableObject {
         bannerState = nil
     }
 
+    func toggleDrawer() {
+        guard route == .inbox else {
+            return
+        }
+
+        isDrawerPresented.toggle()
+    }
+
+    func closeDrawer() {
+        isDrawerPresented = false
+    }
+
+    func resumeSignedInFlow() {
+        isDrawerPresented = false
+        route = .inbox
+    }
+
+    func openSettings() {
+        isDrawerPresented = false
+        route = .settings
+    }
+
+    func closeSettings() {
+        route = .inbox
+    }
+
+    func exitSignedInFlow() {
+        isDrawerPresented = false
+        route = .exited
+    }
+
+    func disconnectFromSettings() {
+        Task {
+            do {
+                let revocationSucceeded = try await authService.disconnectCurrentSession()
+                route = .onboarding
+                isDrawerPresented = false
+                inboxViewState = .loading
+                analyticsService.track(AnalyticsEvent(name: "settings_disconnect_completed"))
+                logger.info("Completed disconnect flow from Settings.", metadata: [:])
+
+                if revocationSucceeded {
+                    presentBanner(message: "Disconnected successfully.", style: .info)
+                } else {
+                    presentBanner(message: AuthFlowError.revocationFailed.message, style: .info)
+                }
+            } catch let error as AuthFlowError {
+                presentError(AppError(authFlowError: error))
+            } catch {
+                presentError(.auth(message: error.localizedDescription))
+            }
+        }
+    }
+
+    func exitFromSettings() {
+        isDrawerPresented = false
+        route = .exited
+    }
+
     func retryFailedOperations() {
         Task {
             await queueService.retryFailedOperations()
@@ -219,6 +285,7 @@ final class AppSessionController: ObservableObject {
     private func clearInvalidSessionAfterRefreshFailure() {
         _ = authService.clearSession()
         route = .onboarding
+        isDrawerPresented = false
         inboxViewState = .loading
         analyticsService.track(AnalyticsEvent(name: "auth_refresh_routed_onboarding"))
         logger.info("Routed to onboarding after refresh failure.", metadata: [:])
