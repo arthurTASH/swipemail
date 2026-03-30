@@ -26,7 +26,12 @@ struct AppDependencies {
                 environment: environment,
                 coordinator: coordinator
             ),
-            gmailService: PlaceholderGmailService(),
+            gmailService: DefaultGmailService(
+                tokenStore: tokenStore,
+                environment: environment,
+                logger: logger,
+                analyticsService: analyticsService
+            ),
             queueService: InMemoryQueueService(),
             syncEngine: PlaceholderSyncEngine(),
             analyticsService: analyticsService,

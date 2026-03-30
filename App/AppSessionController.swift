@@ -14,15 +14,18 @@ final class AppSessionController: ObservableObject {
     @Published var onboardingEmailAddress = ""
 
     private let authService: AuthService
+    private let gmailService: GmailService
     private let analyticsService: AnalyticsService
     private let logger: AppLogger
 
     init(
         authService: AuthService,
+        gmailService: GmailService,
         analyticsService: AnalyticsService,
         logger: AppLogger
     ) {
         self.authService = authService
+        self.gmailService = gmailService
         self.analyticsService = analyticsService
         self.logger = logger
     }
@@ -36,9 +39,9 @@ final class AppSessionController: ObservableObject {
                 logger.info("App bootstrapped to onboarding.", metadata: [:])
             } else {
                 route = .inbox
-                inboxViewState = .empty(message: "Unread primary emails will appear here once Gmail is connected.")
                 analyticsService.track(AnalyticsEvent(name: "app_bootstrap_routed_inbox"))
                 logger.info("App bootstrapped to inbox.", metadata: [:])
+                await loadInbox()
             }
         } catch let error as AuthFlowError {
             clearInvalidSessionAfterRefreshFailure()
@@ -79,7 +82,6 @@ final class AppSessionController: ObservableObject {
                 }
 
                 route = .inbox
-                inboxViewState = .empty(message: "Placeholder inbox is empty. Gmail-backed messages will replace this state in Week 2.")
                 logger.info("Completed OAuth sign-in flow.", metadata: ["provider": session.provider.analyticsLabel])
                 analyticsService.track(
                     AnalyticsEvent(
@@ -87,6 +89,7 @@ final class AppSessionController: ObservableObject {
                         properties: ["provider": session.provider.analyticsLabel]
                     )
                 )
+                await loadInbox()
                 presentBanner(message: "Signed in successfully.", style: .info)
             } catch let error as AuthFlowError {
                 presentError(AppError(authFlowError: error))
@@ -117,6 +120,16 @@ final class AppSessionController: ObservableObject {
             } catch {
                 presentError(.auth(message: error.localizedDescription))
             }
+        }
+    }
+
+    func reloadInbox() {
+        guard route == .inbox else {
+            return
+        }
+
+        Task {
+            await loadInbox()
         }
     }
 
@@ -151,5 +164,39 @@ final class AppSessionController: ObservableObject {
         inboxViewState = .loading
         analyticsService.track(AnalyticsEvent(name: "auth_refresh_routed_onboarding"))
         logger.info("Routed to onboarding after refresh failure.", metadata: [:])
+    }
+
+    private func loadInbox() async {
+        inboxViewState = .loading
+        bannerState = nil
+
+        do {
+            let messages = try await gmailService.fetchUnreadPrimaryMessages()
+
+            if messages.isEmpty {
+                inboxViewState = .empty(message: "No unread primary messages right now.")
+                analyticsService.track(AnalyticsEvent(name: "inbox_loaded_empty"))
+                logger.info("Loaded inbox with no unread primary messages.", metadata: [:])
+            } else {
+                inboxViewState = .ready(messages: messages)
+                analyticsService.track(
+                    AnalyticsEvent(
+                        name: "inbox_loaded_ready",
+                        properties: ["messageCount": String(messages.count)]
+                    )
+                )
+                logger.info(
+                    "Loaded unread primary inbox messages.",
+                    metadata: ["messageCount": String(messages.count)]
+                )
+            }
+        } catch let error as AppError {
+            inboxViewState = .error(error)
+            presentError(error)
+        } catch {
+            let error = AppError.network(message: error.localizedDescription)
+            inboxViewState = .error(error)
+            presentError(error)
+        }
     }
 }

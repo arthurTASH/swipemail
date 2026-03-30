@@ -9,6 +9,7 @@ struct SwipeMailApp: App {
         _sessionController = StateObject(
             wrappedValue: AppSessionController(
                 authService: dependencies.authService,
+                gmailService: dependencies.gmailService,
                 analyticsService: dependencies.analyticsService,
                 logger: dependencies.logger
             )
@@ -29,6 +30,7 @@ struct SwipeMailApp: App {
                 case .inbox:
                     InboxPlaceholderView(
                         state: sessionController.inboxViewState,
+                        retryAction: sessionController.reloadInbox,
                         signOutAction: sessionController.signOut
                     )
                 }
