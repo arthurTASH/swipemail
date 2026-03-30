@@ -13,6 +13,11 @@ struct StatusBanner: View {
                 .font(.subheadline)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
+            if let actionTitle = state.actionTitle, let action = state.action {
+                Button(actionTitle, action: action)
+                    .font(.caption.weight(.semibold))
+            }
+
             Button("Dismiss", action: dismissAction)
                 .font(.caption.weight(.semibold))
         }
@@ -53,4 +58,25 @@ struct StatusBannerState: Identifiable, Equatable {
     let id = UUID()
     let message: String
     let style: Style
+    let actionTitle: String?
+    let action: (() -> Void)?
+
+    init(
+        message: String,
+        style: Style,
+        actionTitle: String? = nil,
+        action: (() -> Void)? = nil
+    ) {
+        self.message = message
+        self.style = style
+        self.actionTitle = actionTitle
+        self.action = action
+    }
+
+    static func == (lhs: StatusBannerState, rhs: StatusBannerState) -> Bool {
+        lhs.id == rhs.id &&
+            lhs.message == rhs.message &&
+            lhs.style == rhs.style &&
+            lhs.actionTitle == rhs.actionTitle
+    }
 }

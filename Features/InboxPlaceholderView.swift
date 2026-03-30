@@ -2,6 +2,7 @@ import SwiftUI
 
 struct InboxPlaceholderView: View {
     let state: InboxViewState
+    let actionHandler: (SwipeAction) -> Void
     let retryAction: () -> Void
     let signOutAction: () -> Void
 
@@ -101,6 +102,7 @@ struct InboxPlaceholderView: View {
         if let firstMessage = messages.first {
             VStack(spacing: 16) {
                 messageCard(firstMessage)
+                actionRow
 
                 Text("\(messages.count) unread primary message\(messages.count == 1 ? "" : "s") in queue")
                     .font(.footnote.weight(.medium))
@@ -113,6 +115,41 @@ struct InboxPlaceholderView: View {
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, 24)
         }
+    }
+
+    private var actionRow: some View {
+        HStack(spacing: 10) {
+            actionButton(title: "Read", systemImage: "arrow.up", tint: .blue, action: .markRead)
+            actionButton(title: "Follow Up", systemImage: "arrow.down", tint: .yellow, action: .followUp)
+            actionButton(title: "Delete", systemImage: "arrow.right", tint: .red, action: .delete)
+            actionButton(title: "Spam", systemImage: "arrow.left", tint: .orange, action: .spam)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func actionButton(
+        title: String,
+        systemImage: String,
+        tint: Color,
+        action: SwipeAction
+    ) -> some View {
+        Button {
+            actionHandler(action)
+        } label: {
+            VStack(spacing: 6) {
+                Image(systemName: systemImage)
+                    .font(.headline.weight(.semibold))
+
+                Text(title)
+                    .font(.caption.weight(.semibold))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 10)
+        }
+        .buttonStyle(.borderedProminent)
+        .tint(tint)
     }
 
     private func messageCard(_ message: GmailMessage) -> some View {
