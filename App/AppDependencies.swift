@@ -16,6 +16,13 @@ struct AppDependencies {
         let providerRouter = DefaultAuthProviderRouter()
         let environment = AppEnvironment.current
         let coordinator = OAuthCoordinator()
+        let queueService = InMemoryQueueService()
+        let gmailService = DefaultGmailService(
+            tokenStore: tokenStore,
+            environment: environment,
+            logger: logger,
+            analyticsService: analyticsService
+        )
 
         return AppDependencies(
             authService: DefaultAuthService(
@@ -26,9 +33,14 @@ struct AppDependencies {
                 environment: environment,
                 coordinator: coordinator
             ),
-            gmailService: PlaceholderGmailService(),
-            queueService: InMemoryQueueService(),
-            syncEngine: PlaceholderSyncEngine(),
+            gmailService: gmailService,
+            queueService: queueService,
+            syncEngine: DefaultSyncEngine(
+                queueService: queueService,
+                gmailService: gmailService,
+                analyticsService: analyticsService,
+                logger: logger
+            ),
             analyticsService: analyticsService,
             logger: logger
         )

@@ -11,7 +11,7 @@
 PRODUCT_BUNDLE_IDENTIFIER = com.swipemail.app.debug
 
 SWIPEMAIL_OAUTH_CLIENT_ID = 828484819720-d2rqovh4ch9i6k7vh5bp22oisktdefra.apps.googleusercontent.com
-SWIPEMAIL_OAUTH_REDIRECT_URI = com.googleusercontent.apps.828484819720-d2rqovh4ch9i6k7vh5bp22oisktdefra:/oauthredirectgreat
+SWIPEMAIL_OAUTH_REDIRECT_URI = com.googleusercontent.apps.828484819720-d2rqovh4ch9i6k7vh5bp22oisktdefra:/oauthredirect
 SWIPEMAIL_OAUTH_CALLBACK_SCHEME = com.googleusercontent.apps.828484819720-d2rqovh4ch9i6k7vh5bp22oisktdefra
 
 SWIPEMAIL_GMAIL_API_BASE_URL = https:/$()/gmail.googleapis.com

@@ -12,17 +12,27 @@ final class AppSessionController: ObservableObject {
     @Published private(set) var inboxViewState: InboxViewState = .loading
     @Published var bannerState: StatusBannerState?
     @Published var onboardingEmailAddress = ""
+    @Published private(set) var hasFailedSyncOperations = false
 
     private let authService: AuthService
+    private let gmailService: GmailService
+    private let queueService: QueueService
+    private let syncEngine: SyncEngine
     private let analyticsService: AnalyticsService
     private let logger: AppLogger
 
     init(
         authService: AuthService,
+        gmailService: GmailService,
+        queueService: QueueService,
+        syncEngine: SyncEngine,
         analyticsService: AnalyticsService,
         logger: AppLogger
     ) {
         self.authService = authService
+        self.gmailService = gmailService
+        self.queueService = queueService
+        self.syncEngine = syncEngine
         self.analyticsService = analyticsService
         self.logger = logger
     }
@@ -36,9 +46,9 @@ final class AppSessionController: ObservableObject {
                 logger.info("App bootstrapped to onboarding.", metadata: [:])
             } else {
                 route = .inbox
-                inboxViewState = .empty(message: "Unread primary emails will appear here once Gmail is connected.")
                 analyticsService.track(AnalyticsEvent(name: "app_bootstrap_routed_inbox"))
                 logger.info("App bootstrapped to inbox.", metadata: [:])
+                await loadInbox()
             }
         } catch let error as AuthFlowError {
             clearInvalidSessionAfterRefreshFailure()
@@ -79,7 +89,6 @@ final class AppSessionController: ObservableObject {
                 }
 
                 route = .inbox
-                inboxViewState = .empty(message: "Placeholder inbox is empty. Gmail-backed messages will replace this state in Week 2.")
                 logger.info("Completed OAuth sign-in flow.", metadata: ["provider": session.provider.analyticsLabel])
                 analyticsService.track(
                     AnalyticsEvent(
@@ -87,6 +96,7 @@ final class AppSessionController: ObservableObject {
                         properties: ["provider": session.provider.analyticsLabel]
                     )
                 )
+                await loadInbox()
                 presentBanner(message: "Signed in successfully.", style: .info)
             } catch let error as AuthFlowError {
                 presentError(AppError(authFlowError: error))
@@ -120,8 +130,69 @@ final class AppSessionController: ObservableObject {
         }
     }
 
+    func reloadInbox() {
+        guard route == .inbox else {
+            return
+        }
+
+        Task {
+            await loadInbox()
+        }
+    }
+
+    func apply(_ action: SwipeAction) {
+        guard case let .ready(messages) = inboxViewState, let currentMessage = messages.first else {
+            return
+        }
+
+        let operation = action.makeOperation(for: currentMessage)
+        let remainingMessages = Array(messages.dropFirst())
+
+        if remainingMessages.isEmpty {
+            inboxViewState = .empty(message: "No unread primary messages right now.")
+        } else {
+            inboxViewState = .ready(messages: remainingMessages)
+        }
+
+        Task {
+            await queueService.enqueue(operation)
+            let result = await syncEngine.syncPendingWork()
+            await MainActor.run {
+                handleSyncResult(result)
+            }
+        }
+
+        analyticsService.track(
+            AnalyticsEvent(
+                name: "inbox_action_queued",
+                properties: [
+                    "action": action.analyticsLabel,
+                    "messageID": currentMessage.id,
+                ]
+            )
+        )
+        logger.info(
+            "Queued inbox action for background sync.",
+            metadata: [
+                "action": action.analyticsLabel,
+                "messageID": currentMessage.id,
+            ]
+        )
+        presentBanner(message: bannerMessage(for: action), style: .info)
+    }
+
     func dismissBanner() {
         bannerState = nil
+    }
+
+    func retryFailedOperations() {
+        Task {
+            await queueService.retryFailedOperations()
+            let result = await syncEngine.syncPendingWork()
+            await MainActor.run {
+                handleSyncResult(result)
+            }
+        }
     }
 
     func handleOpenURL(_ url: URL) {
@@ -151,5 +222,75 @@ final class AppSessionController: ObservableObject {
         inboxViewState = .loading
         analyticsService.track(AnalyticsEvent(name: "auth_refresh_routed_onboarding"))
         logger.info("Routed to onboarding after refresh failure.", metadata: [:])
+    }
+
+    private func loadInbox() async {
+        inboxViewState = .loading
+        bannerState = nil
+        hasFailedSyncOperations = false
+
+        do {
+            let messages = try await gmailService.fetchUnreadPrimaryMessages()
+
+            if messages.isEmpty {
+                inboxViewState = .empty(message: "No unread primary messages right now.")
+                analyticsService.track(AnalyticsEvent(name: "inbox_loaded_empty"))
+                logger.info("Loaded inbox with no unread primary messages.", metadata: [:])
+            } else {
+                inboxViewState = .ready(messages: messages)
+                analyticsService.track(
+                    AnalyticsEvent(
+                        name: "inbox_loaded_ready",
+                        properties: ["messageCount": String(messages.count)]
+                    )
+                )
+                logger.info(
+                    "Loaded unread primary inbox messages.",
+                    metadata: ["messageCount": String(messages.count)]
+                )
+            }
+        } catch let error as AppError {
+            inboxViewState = .error(error)
+            presentError(error)
+        } catch {
+            let error = AppError.network(message: error.localizedDescription)
+            inboxViewState = .error(error)
+            presentError(error)
+        }
+    }
+
+    private func bannerMessage(for action: SwipeAction) -> String {
+        switch action {
+        case .markRead:
+            return "Marked for read sync."
+        case .followUp:
+            return "Queued for follow up."
+        case .delete:
+            return "Queued for trash."
+        case .spam:
+            return "Queued for spam."
+        }
+    }
+
+    private func handleSyncResult(_ result: SyncExecutionResult) {
+        hasFailedSyncOperations = !result.failedOperations.isEmpty
+
+        guard let failedOperation = result.failedOperations.first else {
+            return
+        }
+
+        let failedMessage: String
+        if case let .failed(error) = failedOperation.status {
+            failedMessage = error.message
+        } else {
+            failedMessage = "A queued Gmail action failed."
+        }
+
+        bannerState = StatusBannerState(
+            message: failedMessage,
+            style: .error,
+            actionTitle: "Retry",
+            action: retryFailedOperations
+        )
     }
 }
