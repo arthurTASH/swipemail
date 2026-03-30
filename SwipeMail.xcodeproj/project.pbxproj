@@ -36,6 +36,7 @@
 		A1000000000000000000007B /* AuthProviderRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000000000000000000003F /* AuthProviderRouter.swift */; };
 		A1000000000000000000007C /* OAuthCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000080 /* OAuthCoordinator.swift */; };
 		A1000000000000000000007D /* AuthFlowError.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000000000000000000081 /* AuthFlowError.swift */; };
+		DBBA4A132F7A3F6000D206E9 /* ConnectivityMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBBA4A122F7A3F6000D206E9 /* ConnectivityMonitor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +72,7 @@
 		A1000000000000000000003F /* AuthProviderRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthProviderRouter.swift; sourceTree = "<group>"; };
 		A10000000000000000000080 /* OAuthCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuthCoordinator.swift; sourceTree = "<group>"; };
 		A10000000000000000000081 /* AuthFlowError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthFlowError.swift; sourceTree = "<group>"; };
+		DBBA4A122F7A3F6000D206E9 /* ConnectivityMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectivityMonitor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +159,7 @@
 				A1000000000000000000003A /* AppLogger.swift */,
 				A1000000000000000000003B /* AnalyticsService.swift */,
 				A10000000000000000000080 /* OAuthCoordinator.swift */,
+				DBBA4A122F7A3F6000D206E9 /* ConnectivityMonitor.swift */,
 			);
 			path = Infrastructure;
 			sourceTree = "<group>";
@@ -267,6 +270,7 @@
 				A10000000000000000000004 /* ModelScaffold.swift in Sources */,
 				A10000000000000000000005 /* InfrastructureScaffold.swift in Sources */,
 				A10000000000000000000006 /* DesignSystemScaffold.swift in Sources */,
+				DBBA4A132F7A3F6000D206E9 /* ConnectivityMonitor.swift in Sources */,
 				A10000000000000000000007 /* AppEnvironment.swift in Sources */,
 				A10000000000000000000008 /* AppSessionController.swift in Sources */,
 				A10000000000000000000009 /* OnboardingView.swift in Sources */,
